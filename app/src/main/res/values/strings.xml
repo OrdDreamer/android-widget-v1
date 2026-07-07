@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Photo Widget</string>
+    <string name="widget_name">Фото віджет</string>
+    <string name="widget_description">Показує обране фото з галереї на робочому столі</string>
+    <string name="select_photo">Обрати фото</string>
+    <string name="save">Зберегти</string>
+    <string name="scale_mode">Масштабування</string>
+    <string name="cover">Cover</string>
+    <string name="contain">Contain</string>
+    <string name="shape">Форма</string>
+    <string name="shape_rectangle">Прямокутник</string>
+    <string name="shape_rounded">Закруглений</string>
+    <string name="shape_circle">Коло</string>
+    <string name="corner_radius">Радіус кутів</string>
+    <string name="preview">Прев\'ю</string>
+    <string name="pin_widget">Закріпити на робочий столі</string>
+    <string name="default_settings">Налаштування за замовчуванням</string>
+    <string name="active_widgets">Активні віджети</string>
+    <string name="widget_number">Віджет #%1$d</string>
+    <string name="edit_widget">Редагувати</string>
+    <string name="no_photo_selected">Фото не обрано</string>
+    <string name="no_widgets">Немає віджетів на робочому столі</string>
+    <string name="pin_not_supported">Ваш лаунчер не підтримує закріплення віджета</string>
+    <string name="configure_widget">Налаштування віджета</string>
+    <string name="cancel">Скасувати</string>
+</resources>
