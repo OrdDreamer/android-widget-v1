@@ -12,14 +12,19 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -40,10 +45,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.photowidget.data.WidgetConfig
+import com.photowidget.data.WidgetShape
+import com.photowidget.ui.WidgetImagePreview
 import com.photowidget.ui.WidgetSettingsScreen
 import com.photowidget.ui.theme.PhotoWidgetTheme
 import com.photowidget.widget.PhotoWidgetReceiver
@@ -66,7 +76,7 @@ class MainActivity : ComponentActivity() {
             PhotoWidgetTheme {
                 val scope = rememberCoroutineScope()
                 var widgetIds by remember { mutableStateOf(intArrayOf()) }
-                var widgetNames by remember { mutableStateOf<Map<Int, String>>(emptyMap()) }
+                var widgetItems by remember { mutableStateOf<Map<Int, WidgetListItem>>(emptyMap()) }
                 var editingWidgetId by remember { mutableIntStateOf(-1) }
                 var deletingWidgetId by remember { mutableIntStateOf(-1) }
                 val refreshKey = widgetsRefreshKey.intValue
@@ -97,14 +107,17 @@ class MainActivity : ComponentActivity() {
                             PhotoWidgetReceiver::class.java,
                         ),
                     )
-                    widgetNames = widgetIds.associateWith { widgetId ->
+                    widgetItems = widgetIds.associateWith { widgetId ->
                         repository.ensureWidgetConfig(widgetId)
                         val config = repository.getConfig(widgetId)
                         val baseTitle = config.displayName?.trim()
                             ?.takeIf { it.isNotEmpty() }
                             ?: getString(R.string.widget_number, config.widgetNumber)
                         val sizeLabel = widgetSizeInCells(manager, widgetId)
-                        "$baseTitle ($sizeLabel)"
+                        WidgetListItem(
+                            title = "$baseTitle ($sizeLabel)",
+                            config = config,
+                        )
                     }
                 }
 
@@ -152,7 +165,7 @@ class MainActivity : ComponentActivity() {
                             MainScreen(
                                 modifier = Modifier.padding(padding),
                                 widgetIds = widgetIds,
-                                widgetNames = widgetNames,
+                                widgetItems = widgetItems,
                                 onEditWidget = { editingWidgetId = it },
                                 onDeleteWidget = { deletingWidgetId = it },
                                 onPinWidget = {
@@ -255,11 +268,16 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+private data class WidgetListItem(
+    val title: String,
+    val config: WidgetConfig,
+)
+
 @Composable
 private fun MainScreen(
     modifier: Modifier = Modifier,
     widgetIds: IntArray,
-    widgetNames: Map<Int, String>,
+    widgetItems: Map<Int, WidgetListItem>,
     onEditWidget: (Int) -> Unit,
     onDeleteWidget: (Int) -> Unit,
     onPinWidget: () -> Unit,
@@ -292,15 +310,18 @@ private fun MainScreen(
             )
         } else {
             widgetIds.forEach { widgetId ->
+                val item = widgetItems[widgetId]
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    WidgetListThumbnail(config = item?.config)
                     OutlinedButton(
                         onClick = { onEditWidget(widgetId) },
                         modifier = Modifier.weight(1f),
                     ) {
-                        val title = widgetNames[widgetId] ?: stringResource(R.string.widget_number, widgetId)
+                        val title = item?.title ?: stringResource(R.string.widget_number, widgetId)
                         Text(title)
                     }
                     OutlinedButton(
@@ -311,6 +332,39 @@ private fun MainScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun WidgetListThumbnail(config: WidgetConfig?) {
+    val shape = when (config?.shape) {
+        WidgetShape.RECTANGLE, null -> RoundedCornerShape(4.dp)
+        WidgetShape.ROUNDED_RECT -> RoundedCornerShape((config.cornerRadiusDp / 2).coerceAtLeast(4).dp)
+        WidgetShape.CIRCLE -> CircleShape
+    }
+
+    Box(
+        modifier = Modifier
+            .size(52.dp)
+            .clip(shape)
+            .background(Color(0xFF2A2A2A)),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (config?.imageUri != null) {
+            WidgetImagePreview(
+                imageUri = config.imageUri,
+                rotationDegrees = config.rotationDegrees,
+                imageAlignment = config.imageAlignment,
+                scaleMode = config.scaleMode,
+                modifier = Modifier.fillMaxSize(),
+            )
+        } else {
+            Text(
+                text = "#${config?.widgetNumber ?: "?"}",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.7f),
+            )
         }
     }
 }

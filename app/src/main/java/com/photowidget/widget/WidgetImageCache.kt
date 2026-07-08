@@ -1,10 +1,6 @@
 package com.photowidget.widget
 
-import android.appwidget.AppWidgetManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -13,227 +9,20 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.net.Uri
-import android.util.Log
-import android.view.View
-import android.widget.RemoteViews
-import androidx.core.net.toUri
-import com.photowidget.MainActivity
-import com.photowidget.PhotoWidgetApp
-import com.photowidget.R
+import com.photowidget.data.ImageAlignment
 import com.photowidget.data.ScaleMode
-import com.photowidget.data.WidgetClickAction
 import com.photowidget.data.WidgetConfig
 import com.photowidget.data.WidgetShape
-import kotlinx.coroutines.runBlocking
 import kotlin.math.max
 import kotlin.math.min
 
-object PhotoWidgetRenderer {
-
-    private const val TAG = "PhotoWidgetRenderer"
-
-    fun buildViews(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetId: Int,
-        widgetOptions: android.os.Bundle? = null,
-    ): RemoteViews {
-        return try {
-            buildViewsInternal(context, appWidgetManager, appWidgetId, widgetOptions)
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to build widget views for id=$appWidgetId", e)
-            placeholderViews(context)
-        }
-    }
-
-    fun update(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetId: Int,
-        widgetOptions: android.os.Bundle? = null,
-    ) {
-        appWidgetManager.updateAppWidget(
-            appWidgetId,
-            buildViews(context, appWidgetManager, appWidgetId, widgetOptions),
-        )
-    }
-
-    private fun buildViewsInternal(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetId: Int,
-        widgetOptions: android.os.Bundle?,
-    ): RemoteViews {
-        val app = context.applicationContext as PhotoWidgetApp
-        val repository = app.widgetConfigRepository
-
-        val config = runBlocking {
-            repository.ensureWidgetConfig(appWidgetId)
-            repository.getConfig(appWidgetId)
-        }
-
-        val options = widgetOptions ?: appWidgetManager.getAppWidgetOptions(appWidgetId)
-        val (widthDp, heightDp) = widgetSizeDp(options, context.resources.configuration.orientation)
-        val density = context.resources.displayMetrics.density
-        val widthPx = (widthDp * density).toInt().coerceAtLeast(1)
-        val heightPx = (heightDp * density).toInt().coerceAtLeast(1)
-        logWidgetSizing(appWidgetId, options, widthDp, heightDp, widthPx, heightPx)
-
-        val views = RemoteViews(context.packageName, R.layout.widget_photo)
-
-        val imageUri = config.imageUri
-        if (imageUri == null) {
-            showPlaceholder(context, views, config)
-            bindClickAction(context, views, appWidgetId, config)
-            return views
-        }
-
-        WidgetUriHelper.ensureReadPermission(context, imageUri.toUri())
-        val bitmap = WidgetImageCache.renderBitmap(
-            context = context,
-            sourceUri = imageUri.toUri(),
-            config = config,
-            targetWidthPx = widthPx,
-            targetHeightPx = heightPx,
-            density = density,
-        )
-
-        if (bitmap != null) {
-            views.setViewVisibility(R.id.widget_placeholder, View.GONE)
-            views.setViewVisibility(R.id.widget_image, View.VISIBLE)
-            views.setInt(R.id.widget_root, "setBackgroundColor", android.graphics.Color.TRANSPARENT)
-            views.setImageViewBitmap(R.id.widget_image, bitmap)
-        } else {
-            showPlaceholder(context, views, config)
-        }
-        bindClickAction(context, views, appWidgetId, config)
-
-        return views
-    }
-
-    private fun placeholderViews(context: Context): RemoteViews {
-        val views = RemoteViews(context.packageName, R.layout.widget_photo)
-        showPlaceholder(context, views, WidgetConfig())
-        return views
-    }
-
-    private fun showPlaceholder(context: Context, views: RemoteViews, config: WidgetConfig) {
-        views.setViewVisibility(R.id.widget_image, View.GONE)
-        views.setViewVisibility(R.id.widget_placeholder, View.VISIBLE)
-        views.setInt(R.id.widget_root, "setBackgroundColor", 0xFF121212.toInt())
-        val placeholderText = if (config.widgetNumber > 0) {
-            val widgetTitle = context.getString(R.string.widget_number, config.widgetNumber)
-            context.getString(
-                R.string.widget_placeholder_with_number,
-                widgetTitle,
-                context.getString(R.string.no_photo_selected),
-            )
-        } else {
-            context.getString(R.string.no_photo_selected)
-        }
-        views.setTextViewText(R.id.widget_placeholder, placeholderText)
-    }
-
-    private fun bindClickAction(
-        context: Context,
-        views: RemoteViews,
-        appWidgetId: Int,
-        config: WidgetConfig,
-    ) {
-        val effectiveAction = if (config.imageUri == null) {
-            WidgetClickAction.OPEN_WIDGET_SETTINGS
-        } else {
-            config.clickAction
-        }
-        val pendingIntent = when (effectiveAction) {
-            WidgetClickAction.DECORATIVE -> createNoopPendingIntent(context, appWidgetId)
-            WidgetClickAction.OPEN_APP -> createOpenAppPendingIntent(context, appWidgetId)
-            WidgetClickAction.OPEN_WIDGET_SETTINGS -> createOpenWidgetPendingIntent(context, appWidgetId)
-        }
-        views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
-        views.setOnClickPendingIntent(R.id.widget_image, pendingIntent)
-    }
-
-    private fun createNoopPendingIntent(context: Context, appWidgetId: Int): PendingIntent {
-        val intent = Intent(context, PhotoWidgetReceiver::class.java).apply {
-            action = "com.photowidget.widget.NOOP"
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        }
-        return PendingIntent.getBroadcast(
-            context,
-            appWidgetId * 10 + 1,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
-    }
-
-    private fun createOpenAppPendingIntent(context: Context, appWidgetId: Int): PendingIntent {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            action = "com.photowidget.widget.OPEN_APP.$appWidgetId"
-        }
-        return PendingIntent.getActivity(
-            context,
-            appWidgetId * 10 + 2,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
-    }
-
-    private fun createOpenWidgetPendingIntent(context: Context, appWidgetId: Int): PendingIntent {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            action = "com.photowidget.widget.OPEN_WIDGET.$appWidgetId"
-            putExtra(MainActivity.EXTRA_EDIT_WIDGET_ID, appWidgetId)
-        }
-        return PendingIntent.getActivity(
-            context,
-            appWidgetId * 10 + 3,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
-    }
-
-    private fun widgetSizeDp(options: android.os.Bundle, orientation: Int): Pair<Int, Int> {
-        val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 110)
-        val minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 110)
-        val maxWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, minWidth)
-        val maxHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, minHeight)
-
-        return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            maxWidth.coerceAtLeast(1) to minHeight.coerceAtLeast(1)
-        } else {
-            minWidth.coerceAtLeast(1) to maxHeight.coerceAtLeast(1)
-        }
-    }
-
-    private fun logWidgetSizing(
-        appWidgetId: Int,
-        options: android.os.Bundle,
-        widthDp: Int,
-        heightDp: Int,
-        widthPx: Int,
-        heightPx: Int,
-    ) {
-        val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, -1)
-        val minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, -1)
-        val maxWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, -1)
-        val maxHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, -1)
-
-        Log.d(
-            TAG,
-            "widgetId=$appWidgetId options(min=${minWidth}x$minHeight, max=${maxWidth}x$maxHeight) " +
-                "chosen=${widthDp}x${heightDp}dp render=${widthPx}x${heightPx}px",
-        )
-    }
-}
-
 object WidgetImageCache {
 
-    private const val MAX_BITMAP_BYTES = 350_000
-    private const val MAX_BITMAP_DIMENSION = 480
+    // RemoteViews parcel limit is ~1 MB; keep bitmap payload safely below it.
+    private const val MAX_BITMAP_BYTES = 950_000
+    private const val DECODE_QUALITY_FACTOR = 1.35f
 
-    fun renderBitmap(
+    fun renderForWidget(
         context: Context,
         sourceUri: Uri,
         config: WidgetConfig,
@@ -241,57 +30,111 @@ object WidgetImageCache {
         targetHeightPx: Int,
         density: Float,
     ): Bitmap? {
+        val bitmap = renderBitmap(
+            context = context,
+            sourceUri = sourceUri,
+            config = config,
+            targetWidthPx = targetWidthPx,
+            targetHeightPx = targetHeightPx,
+            density = density,
+        ) ?: return null
+
+        val fitted = fitForRemoteViews(bitmap, config)
+        if (fitted !== bitmap) {
+            bitmap.recycle()
+        }
+        return fitted
+    }
+
+    private fun renderBitmap(
+        context: Context,
+        sourceUri: Uri,
+        config: WidgetConfig,
+        targetWidthPx: Int,
+        targetHeightPx: Int,
+        density: Float,
+    ): Bitmap? {
+        val exifRotation = ImageOrientationHelper.readExifRotationDegrees(context, sourceUri)
+        val totalRotation = ImageOrientationHelper.totalRotation(exifRotation, config.rotationDegrees)
+        val (decodeWidth, decodeHeight) = if (totalRotation % 180 != 0) {
+            targetHeightPx to targetWidthPx
+        } else {
+            targetWidthPx to targetHeightPx
+        }
+
         val source = decodeSampledBitmap(
             context = context,
             uri = sourceUri,
-            reqWidth = targetWidthPx,
-            reqHeight = targetHeightPx,
+            reqWidth = (decodeWidth * DECODE_QUALITY_FACTOR).toInt().coerceAtLeast(decodeWidth),
+            reqHeight = (decodeHeight * DECODE_QUALITY_FACTOR).toInt().coerceAtLeast(decodeHeight),
+            exifRotation = exifRotation,
         ) ?: return null
 
-        val scaled = renderScaled(source, config.scaleMode, targetWidthPx, targetHeightPx)
-        if (scaled !== source) {
+        val transformed = renderTransformed(
+            source = source,
+            totalRotation = totalRotation,
+            scaleMode = config.scaleMode,
+            alignment = config.imageAlignment,
+            targetWidth = targetWidthPx,
+            targetHeight = targetHeightPx,
+        )
+        if (transformed !== source) {
             source.recycle()
         }
 
-        val preserveAlpha = config.shape != WidgetShape.RECTANGLE ||
-            config.scaleMode == ScaleMode.CONTAIN
-        val compressed = compressForRemoteViews(scaled, preserveAlpha)
-        if (compressed !== scaled) {
-            scaled.recycle()
-        }
-
-        val scale = compressed.width.toFloat() / targetWidthPx
-        val shaped = applyShape(
-            source = compressed,
+        return applyShape(
+            source = transformed,
             config = config,
-            targetWidth = compressed.width,
-            targetHeight = compressed.height,
-            density = density * scale,
+            targetWidth = transformed.width,
+            targetHeight = transformed.height,
+            density = density,
         )
-        if (shaped !== compressed) {
-            compressed.recycle()
-        }
-
-        return shaped
     }
 
-    private fun compressForRemoteViews(bitmap: Bitmap, preserveAlpha: Boolean): Bitmap {
-        var result = bitmap
+    private fun renderTransformed(
+        source: Bitmap,
+        totalRotation: Int,
+        scaleMode: ScaleMode,
+        alignment: ImageAlignment,
+        targetWidth: Int,
+        targetHeight: Int,
+    ): Bitmap {
+        val output = Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
 
-        val maxSide = max(result.width, result.height)
-        if (maxSide > MAX_BITMAP_DIMENSION) {
-            val scale = MAX_BITMAP_DIMENSION.toFloat() / maxSide
-            val scaled = Bitmap.createScaledBitmap(
-                result,
-                (result.width * scale).toInt().coerceAtLeast(1),
-                (result.height * scale).toInt().coerceAtLeast(1),
-                true,
+        val orientedWidth = if (totalRotation % 180 != 0) source.height else source.width
+        val orientedHeight = if (totalRotation % 180 != 0) source.width else source.height
+        val scale = when (scaleMode) {
+            ScaleMode.COVER -> maxOf(
+                targetWidth.toFloat() / orientedWidth,
+                targetHeight.toFloat() / orientedHeight,
             )
-            if (scaled !== result) {
-                result.recycle()
-            }
-            result = scaled
+            ScaleMode.CONTAIN -> minOf(
+                targetWidth.toFloat() / orientedWidth,
+                targetHeight.toFloat() / orientedHeight,
+            )
         }
+
+        val scaledWidth = orientedWidth * scale
+        val scaledHeight = orientedHeight * scale
+        val dx = alignment.offsetX(targetWidth.toFloat(), scaledWidth)
+        val dy = alignment.offsetY(targetHeight.toFloat(), scaledHeight)
+
+        val matrix = Matrix().apply {
+            postTranslate(-source.width / 2f, -source.height / 2f)
+            postRotate(totalRotation.toFloat())
+            postScale(scale, scale)
+            postTranslate(dx + scaledWidth / 2f, dy + scaledHeight / 2f)
+        }
+        canvas.drawBitmap(source, matrix, paint)
+        return output
+    }
+
+    private fun fitForRemoteViews(bitmap: Bitmap, config: WidgetConfig): Bitmap {
+        var result = bitmap
+        val preserveAlpha = config.shape != WidgetShape.RECTANGLE ||
+            config.scaleMode == ScaleMode.CONTAIN
 
         if (!preserveAlpha && result.byteCount > MAX_BITMAP_BYTES) {
             val rgb = result.copy(Bitmap.Config.RGB_565, false)
@@ -302,12 +145,11 @@ object WidgetImageCache {
         }
 
         while (result.byteCount > MAX_BITMAP_BYTES) {
-            val scale = 0.85f
-            val smaller = Bitmap.createScaledBitmap(
+            val scale = 0.94f
+            val smaller = scaleBitmapHighQuality(
                 result,
                 (result.width * scale).toInt().coerceAtLeast(1),
                 (result.height * scale).toInt().coerceAtLeast(1),
-                true,
             )
             if (smaller !== result) {
                 result.recycle()
@@ -318,35 +160,18 @@ object WidgetImageCache {
         return result
     }
 
-    private fun renderScaled(
-        source: Bitmap,
-        scaleMode: ScaleMode,
-        targetWidth: Int,
-        targetHeight: Int,
-    ): Bitmap {
-        val output = Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(output)
-
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
-        val scale = when (scaleMode) {
-            ScaleMode.COVER -> maxOf(
-                targetWidth.toFloat() / source.width,
-                targetHeight.toFloat() / source.height,
-            )
-            ScaleMode.CONTAIN -> minOf(
-                targetWidth.toFloat() / source.width,
-                targetHeight.toFloat() / source.height,
-            )
+    private fun scaleBitmapHighQuality(source: Bitmap, newWidth: Int, newHeight: Int): Bitmap {
+        if (source.width == newWidth && source.height == newHeight) {
+            return source
         }
-
-        val scaledWidth = source.width * scale
-        val scaledHeight = source.height * scale
-        val dx = (targetWidth - scaledWidth) / 2f
-        val dy = (targetHeight - scaledHeight) / 2f
-
+        val output = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        val paint = Paint(Paint.FILTER_BITMAP_FLAG or Paint.ANTI_ALIAS_FLAG)
         val matrix = Matrix().apply {
-            postScale(scale, scale)
-            postTranslate(dx, dy)
+            setScale(
+                newWidth.toFloat() / source.width,
+                newHeight.toFloat() / source.height,
+            )
         }
         canvas.drawBitmap(source, matrix, paint)
         return output
@@ -392,6 +217,7 @@ object WidgetImageCache {
         uri: Uri,
         reqWidth: Int,
         reqHeight: Int,
+        exifRotation: Int,
     ): Bitmap? {
         return try {
             val resolver = context.contentResolver
@@ -402,7 +228,18 @@ object WidgetImageCache {
             if (boundsOptions.outWidth <= 0 || boundsOptions.outHeight <= 0) {
                 return null
             }
-            val sampleSize = calculateInSampleSize(boundsOptions, reqWidth * 2, reqHeight * 2)
+
+            val (orientedWidth, orientedHeight) = ImageOrientationHelper.orientedBounds(
+                boundsOptions.outWidth,
+                boundsOptions.outHeight,
+                exifRotation,
+            )
+            val sampleSize = calculateInSampleSize(
+                width = orientedWidth,
+                height = orientedHeight,
+                reqWidth = reqWidth,
+                reqHeight = reqHeight,
+            )
             val decodeOptions = BitmapFactory.Options().apply {
                 inSampleSize = sampleSize
                 inPreferredConfig = Bitmap.Config.ARGB_8888
@@ -416,12 +253,11 @@ object WidgetImageCache {
     }
 
     private fun calculateInSampleSize(
-        options: BitmapFactory.Options,
+        width: Int,
+        height: Int,
         reqWidth: Int,
         reqHeight: Int,
     ): Int {
-        val height = options.outHeight
-        val width = options.outWidth
         var inSampleSize = 1
         if (height > reqHeight || width > reqWidth) {
             var halfHeight = height / 2
@@ -431,18 +267,5 @@ object WidgetImageCache {
             }
         }
         return inSampleSize
-    }
-}
-
-object WidgetUriHelper {
-
-    fun ensureReadPermission(context: Context, uri: Uri) {
-        try {
-            context.contentResolver.takePersistableUriPermission(
-                uri,
-                android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION,
-            )
-        } catch (_: SecurityException) {
-        }
     }
 }

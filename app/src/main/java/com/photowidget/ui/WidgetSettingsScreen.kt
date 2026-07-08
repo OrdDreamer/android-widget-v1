@@ -20,8 +20,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.RotateLeft
+import androidx.compose.material.icons.automirrored.filled.RotateRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -40,13 +45,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.photowidget.R
+import com.photowidget.data.ImageAlignment
 import com.photowidget.data.WidgetClickAction
 import com.photowidget.data.ScaleMode
 import com.photowidget.data.WidgetConfig
@@ -111,6 +115,60 @@ fun WidgetSettingsScreen(
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
+
+        if (config.imageUri != null) {
+            Text(
+                text = stringResource(R.string.image_rotation),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        config = config.copy(rotationDegrees = config.rotationDegrees - 90)
+                    },
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.RotateLeft,
+                        contentDescription = stringResource(R.string.rotate_counterclockwise),
+                    )
+                    Text(
+                        text = stringResource(R.string.rotate_counterclockwise),
+                        modifier = Modifier.padding(start = 4.dp),
+                    )
+                }
+                Text(
+                    text = stringResource(R.string.rotation_degrees, normalizeRotation(config.rotationDegrees)),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                OutlinedButton(
+                    onClick = {
+                        config = config.copy(rotationDegrees = config.rotationDegrees + 90)
+                    },
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text(stringResource(R.string.rotate_clockwise))
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.RotateRight,
+                        contentDescription = stringResource(R.string.rotate_clockwise),
+                        modifier = Modifier.padding(start = 4.dp),
+                    )
+                }
+            }
+
+            Text(
+                text = stringResource(R.string.image_alignment),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            ImageAlignmentSelector(
+                selected = config.imageAlignment,
+                onSelected = { config = config.copy(imageAlignment = it) },
+            )
+        }
 
         Text(
             text = stringResource(R.string.scale_mode),
@@ -253,16 +311,68 @@ fun WidgetSettingsScreen(
 }
 
 @Composable
+private fun ImageAlignmentSelector(
+    selected: ImageAlignment,
+    onSelected: (ImageAlignment) -> Unit,
+) {
+    val rows = listOf(
+        listOf(ImageAlignment.TOP_LEFT, ImageAlignment.TOP, ImageAlignment.TOP_RIGHT),
+        listOf(ImageAlignment.LEFT, ImageAlignment.CENTER, ImageAlignment.RIGHT),
+        listOf(ImageAlignment.BOTTOM_LEFT, ImageAlignment.BOTTOM, ImageAlignment.BOTTOM_RIGHT),
+    )
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        rows.forEach { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                row.forEach { alignment ->
+                    FilterChip(
+                        selected = selected == alignment,
+                        onClick = { onSelected(alignment) },
+                        label = {
+                            Text(
+                                text = alignmentLabel(alignment),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun alignmentLabel(alignment: ImageAlignment): String {
+    return when (alignment) {
+        ImageAlignment.CENTER -> stringResource(R.string.alignment_center)
+        ImageAlignment.TOP -> stringResource(R.string.alignment_top)
+        ImageAlignment.BOTTOM -> stringResource(R.string.alignment_bottom)
+        ImageAlignment.LEFT -> stringResource(R.string.alignment_left)
+        ImageAlignment.RIGHT -> stringResource(R.string.alignment_right)
+        ImageAlignment.TOP_LEFT -> stringResource(R.string.alignment_top_left)
+        ImageAlignment.TOP_RIGHT -> stringResource(R.string.alignment_top_right)
+        ImageAlignment.BOTTOM_LEFT -> stringResource(R.string.alignment_bottom_left)
+        ImageAlignment.BOTTOM_RIGHT -> stringResource(R.string.alignment_bottom_right)
+    }
+}
+
+private fun normalizeRotation(degrees: Int): Int {
+    return ((degrees % 360) + 360) % 360
+}
+
+@Composable
 private fun WidgetPreview(config: WidgetConfig) {
     val shape = when (config.shape) {
         WidgetShape.RECTANGLE -> RoundedCornerShape(0.dp)
         WidgetShape.ROUNDED_RECT -> RoundedCornerShape(config.cornerRadiusDp.dp)
         WidgetShape.CIRCLE -> CircleShape
-    }
-
-    val contentScale = when (config.scaleMode) {
-        ScaleMode.COVER -> ContentScale.Crop
-        ScaleMode.CONTAIN -> ContentScale.Fit
     }
 
     Box(
@@ -271,14 +381,15 @@ private fun WidgetPreview(config: WidgetConfig) {
             .aspectRatio(1f)
             .clip(shape)
             .background(Color(0xFFE0E0E0)),
-        contentAlignment = Alignment.Center,
+        contentAlignment = config.imageAlignment.toComposeAlignment(),
     ) {
         if (config.imageUri != null) {
-            AsyncImage(
-                model = config.imageUri,
-                contentDescription = null,
+            WidgetImagePreview(
+                imageUri = config.imageUri,
+                rotationDegrees = config.rotationDegrees,
+                imageAlignment = config.imageAlignment,
+                scaleMode = config.scaleMode,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = contentScale,
             )
         } else {
             Text(

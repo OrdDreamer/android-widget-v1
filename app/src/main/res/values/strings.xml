@@ -38,4 +38,18 @@
     <string name="delete_widget_message">Це очистить фото та налаштування цього віджета і поверне його в початковий стан. Віджет залишиться на робочому столі.</string>
     <string name="delete_widget_confirm">Скинути</string>
     <string name="delete_widget_done">Віджет скинуто до початкового стану.</string>
+    <string name="image_rotation">Поворот зображення</string>
+    <string name="rotate_counterclockwise">Проти годинникової</string>
+    <string name="rotate_clockwise">За годинниковою</string>
+    <string name="rotation_degrees">%1$d°</string>
+    <string name="image_alignment">Позиціонування</string>
+    <string name="alignment_center">Центр</string>
+    <string name="alignment_top">Зверху</string>
+    <string name="alignment_bottom">Знизу</string>
+    <string name="alignment_left">Ліворуч</string>
+    <string name="alignment_right">Праворуч</string>
+    <string name="alignment_top_left">Верх. лівий</string>
+    <string name="alignment_top_right">Верх. правий</string>
+    <string name="alignment_bottom_left">Нижн. лівий</string>
+    <string name="alignment_bottom_right">Нижн. правий</string>
 </resources>

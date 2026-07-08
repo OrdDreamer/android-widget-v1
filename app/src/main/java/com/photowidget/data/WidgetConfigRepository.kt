@@ -110,6 +110,8 @@ class WidgetConfigRepository(private val context: Context) {
             prefs.remove(keyShape(keyFor(appWidgetId)))
             prefs.remove(keyCornerRadius(keyFor(appWidgetId)))
             prefs.remove(keyClickAction(keyFor(appWidgetId)))
+            prefs.remove(keyRotationDegrees(keyFor(appWidgetId)))
+            prefs.remove(keyImageAlignment(keyFor(appWidgetId)))
         }
     }
 
@@ -136,11 +138,21 @@ class WidgetConfigRepository(private val context: Context) {
     private fun keyClickAction(base: Preferences.Key<String>) =
         stringPreferencesKey("${base.name}_click_action")
 
+    private fun keyRotationDegrees(base: Preferences.Key<String>) =
+        intPreferencesKey("${base.name}_rotation_degrees")
+
+    private fun keyImageAlignment(base: Preferences.Key<String>) =
+        stringPreferencesKey("${base.name}_image_alignment")
+
     private fun Preferences.toWidgetConfig(base: Preferences.Key<String>): WidgetConfig {
         return WidgetConfig(
             widgetNumber = this[keyWidgetNumber(base)] ?: 0,
             displayName = this[keyDisplayName(base)],
             imageUri = this[keyImageUri(base)],
+            rotationDegrees = this[keyRotationDegrees(base)] ?: 0,
+            imageAlignment = this[keyImageAlignment(base)]?.let { name ->
+                ImageAlignment.entries.firstOrNull { it.name == name }
+            } ?: ImageAlignment.CENTER,
             scaleMode = this[keyScaleMode(base)]?.let { name ->
                 ScaleMode.entries.firstOrNull { it.name == name }
             } ?: ScaleMode.COVER,
@@ -170,6 +182,8 @@ class WidgetConfigRepository(private val context: Context) {
         } else {
             prefs.remove(keyImageUri(base))
         }
+        prefs[keyRotationDegrees(base)] = config.rotationDegrees
+        prefs[keyImageAlignment(base)] = config.imageAlignment.name
         prefs[keyScaleMode(base)] = config.scaleMode.name
         prefs[keyShape(base)] = config.shape.name
         prefs[keyCornerRadius(base)] = config.cornerRadiusDp

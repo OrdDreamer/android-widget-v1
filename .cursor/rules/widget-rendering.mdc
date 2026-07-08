@@ -1,0 +1,27 @@
+---
+description: Критичні обмеження рендеру фото-віджета (RemoteViews). Запобігає регресії «не вдається завантажити віджет».
+globs: app/src/main/java/com/photowidget/widget/**,app/src/main/res/layout/widget_photo.xml
+alwaysApply: false
+---
+
+# Widget image delivery
+
+Read `AGENTS.md` → section **CRITICAL: «не вдається завантажити віджет»** before editing these files.
+
+## MUST
+
+- Deliver widget photos via `setImageViewBitmap` only (`PhotoWidgetRenderer`).
+- Render offline in `WidgetImageCache`; bake shape into bitmap.
+- Keep `MAX_BITMAP_BYTES` ≈ 950_000 unless tested on Android 17+ (Pixel/Nexus Launcher).
+- Apply EXIF in `ImageOrientationHelper`; sync preview via `WidgetImagePreview`.
+
+## MUST NOT
+
+- `setImageViewUri` for widget `ImageView` (breaks Android 17: `AppsFilter: BLOCKED`).
+- `setViewOutlinePreferredRadius` / `setClipToOutline` on RemoteViews.
+- Jetpack Glance for this widget.
+- Uncompressed full-resolution bitmaps through Binder.
+
+## Quality
+
+Improve inside the byte budget (decode, single rotate+scale pass, RGB_565 when opaque). Do not switch to FileProvider/URI to bypass the limit.
