@@ -18,6 +18,7 @@
     <string name="default_settings">Налаштування за замовчуванням</string>
     <string name="active_widgets">Активні віджети</string>
     <string name="widget_number">Віджет #%1$d</string>
+    <string name="widget_placeholder_with_number">%1$s\n%2$s</string>
     <string name="edit_widget">Редагувати</string>
     <string name="no_photo_selected">Фото не обрано</string>
     <string name="no_widgets">Немає віджетів на робочому столі</string>

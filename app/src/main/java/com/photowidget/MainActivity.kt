@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -49,6 +50,7 @@ import com.photowidget.widget.PhotoWidgetReceiver
 import com.photowidget.widget.WidgetUpdateHelper
 import com.photowidget.widget.WidgetUriHelper
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
 
@@ -96,8 +98,14 @@ class MainActivity : ComponentActivity() {
                         ),
                     )
                     widgetNames = widgetIds.associateWith { widgetId ->
-                        repository.getConfig(widgetId).displayName?.trim().orEmpty()
-                    }.filterValues { it.isNotEmpty() }
+                        repository.ensureWidgetConfig(widgetId)
+                        val config = repository.getConfig(widgetId)
+                        val baseTitle = config.displayName?.trim()
+                            ?.takeIf { it.isNotEmpty() }
+                            ?: getString(R.string.widget_number, config.widgetNumber)
+                        val sizeLabel = widgetSizeInCells(manager, widgetId)
+                        "$baseTitle ($sizeLabel)"
+                    }
                 }
 
                 Scaffold(
@@ -193,7 +201,7 @@ class MainActivity : ComponentActivity() {
                                     val widgetId = deletingWidgetId
                                     deletingWidgetId = -1
                                     scope.launch {
-                                        repository.deleteConfig(widgetId)
+                                        repository.resetConfig(widgetId)
                                         WidgetUpdateHelper.updateWidget(this@MainActivity, widgetId)
                                         WidgetUpdateHelper.requestSystemUpdate(this@MainActivity, widgetId)
                                         widgetsRefreshKey.intValue++
@@ -226,6 +234,24 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val EXTRA_EDIT_WIDGET_ID = "extra_edit_widget_id"
+    }
+
+    private fun widgetSizeInCells(manager: AppWidgetManager, appWidgetId: Int): String {
+        val options = manager.getAppWidgetOptions(appWidgetId)
+        val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 70)
+        val minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 70)
+        val maxWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, minWidth)
+        val maxHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, minHeight)
+        val orientation = resources.configuration.orientation
+        val widthDp = if (orientation == Configuration.ORIENTATION_LANDSCAPE) maxWidth else minWidth
+        val heightDp = if (orientation == Configuration.ORIENTATION_LANDSCAPE) minHeight else maxHeight
+        val spanX = spanFromDp(widthDp)
+        val spanY = spanFromDp(heightDp)
+        return "${spanX}x$spanY"
+    }
+
+    private fun spanFromDp(sizeDp: Int): Int {
+        return (sizeDp / 100f).roundToInt().coerceAtLeast(1)
     }
 }
 
@@ -265,7 +291,7 @@ private fun MainScreen(
                 style = MaterialTheme.typography.bodyMedium,
             )
         } else {
-            widgetIds.forEachIndexed { index, widgetId ->
+            widgetIds.forEach { widgetId ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -274,7 +300,7 @@ private fun MainScreen(
                         onClick = { onEditWidget(widgetId) },
                         modifier = Modifier.weight(1f),
                     ) {
-                        val title = widgetNames[widgetId] ?: stringResource(R.string.widget_number, index + 1)
+                        val title = widgetNames[widgetId] ?: stringResource(R.string.widget_number, widgetId)
                         Text(title)
                     }
                     OutlinedButton(

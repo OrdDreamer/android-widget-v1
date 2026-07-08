@@ -18,6 +18,7 @@ enum class WidgetClickAction {
 }
 
 data class WidgetConfig(
+    val widgetNumber: Int = 0,
     val displayName: String? = null,
     val imageUri: String? = null,
     val scaleMode: ScaleMode = ScaleMode.COVER,

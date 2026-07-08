@@ -18,6 +18,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class WidgetConfigRepository(private val context: Context) {
 
     private val defaultConfigKey = stringPreferencesKey("default_config")
+    private val nextWidgetNumberKey = intPreferencesKey("next_widget_number")
 
     fun configFlow(appWidgetId: Int): Flow<WidgetConfig> {
         return context.dataStore.data.map { prefs ->
@@ -52,13 +53,47 @@ class WidgetConfigRepository(private val context: Context) {
         val key = keyFor(appWidgetId)
         if (!prefs.contains(keyScaleMode(key))) {
             val default = prefs.toWidgetConfig(defaultConfigKey)
-            saveConfig(appWidgetId, default)
-            default.imageUri?.let { WidgetUriHelper.ensureReadPermission(context, it.toUri()) }
+            val nextNumber = prefs[nextWidgetNumberKey] ?: 1
+            val initial = default.copy(widgetNumber = nextNumber, displayName = null)
+            context.dataStore.edit { mutablePrefs ->
+                writeConfig(mutablePrefs, key, initial)
+                mutablePrefs[nextWidgetNumberKey] = nextNumber + 1
+            }
+            initial.imageUri?.let { WidgetUriHelper.ensureReadPermission(context, it.toUri()) }
+        } else if (!prefs.contains(keyWidgetNumber(key))) {
+            val nextNumber = prefs[nextWidgetNumberKey] ?: 1
+            context.dataStore.edit { mutablePrefs ->
+                mutablePrefs[keyWidgetNumber(key)] = nextNumber
+                mutablePrefs[nextWidgetNumberKey] = nextNumber + 1
+            }
+        }
+    }
+
+    suspend fun resetConfig(appWidgetId: Int) {
+        val prefs = context.dataStore.data.first()
+        val key = keyFor(appWidgetId)
+        if (!prefs.contains(keyScaleMode(key))) return
+
+        val existing = prefs.toWidgetConfig(key)
+        val default = prefs.toWidgetConfig(defaultConfigKey)
+        val fallbackNumber = prefs[nextWidgetNumberKey] ?: 1
+        val widgetNumber = existing.widgetNumber.takeIf { it > 0 } ?: fallbackNumber
+        val reset = default.copy(
+            widgetNumber = widgetNumber,
+            displayName = null,
+            imageUri = null,
+        )
+        context.dataStore.edit { mutablePrefs ->
+            writeConfig(mutablePrefs, key, reset)
+            if (existing.widgetNumber <= 0) {
+                mutablePrefs[nextWidgetNumberKey] = widgetNumber + 1
+            }
         }
     }
 
     suspend fun deleteConfig(appWidgetId: Int) {
         context.dataStore.edit { prefs ->
+            prefs.remove(keyWidgetNumber(keyFor(appWidgetId)))
             prefs.remove(keyDisplayName(keyFor(appWidgetId)))
             prefs.remove(keyImageUri(keyFor(appWidgetId)))
             prefs.remove(keyScaleMode(keyFor(appWidgetId)))
@@ -76,6 +111,9 @@ class WidgetConfigRepository(private val context: Context) {
     private fun keyDisplayName(base: Preferences.Key<String>) =
         stringPreferencesKey("${base.name}_display_name")
 
+    private fun keyWidgetNumber(base: Preferences.Key<String>) =
+        intPreferencesKey("${base.name}_widget_number")
+
     private fun keyScaleMode(base: Preferences.Key<String>) =
         stringPreferencesKey("${base.name}_scale_mode")
 
@@ -90,6 +128,7 @@ class WidgetConfigRepository(private val context: Context) {
 
     private fun Preferences.toWidgetConfig(base: Preferences.Key<String>): WidgetConfig {
         return WidgetConfig(
+            widgetNumber = this[keyWidgetNumber(base)] ?: 0,
             displayName = this[keyDisplayName(base)],
             imageUri = this[keyImageUri(base)],
             scaleMode = this[keyScaleMode(base)]?.let { name ->
@@ -110,6 +149,7 @@ class WidgetConfigRepository(private val context: Context) {
         base: Preferences.Key<String>,
         config: WidgetConfig,
     ) {
+        prefs[keyWidgetNumber(base)] = config.widgetNumber
         if (config.displayName != null) {
             prefs[keyDisplayName(base)] = config.displayName
         } else {

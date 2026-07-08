@@ -83,7 +83,7 @@ object PhotoWidgetRenderer {
 
         val imageUri = config.imageUri
         if (imageUri == null) {
-            showPlaceholder(views)
+            showPlaceholder(context, views, config)
             bindClickAction(context, views, appWidgetId, config)
             return views
         }
@@ -104,7 +104,7 @@ object PhotoWidgetRenderer {
             views.setInt(R.id.widget_root, "setBackgroundColor", android.graphics.Color.TRANSPARENT)
             views.setImageViewBitmap(R.id.widget_image, bitmap)
         } else {
-            showPlaceholder(views)
+            showPlaceholder(context, views, config)
         }
         bindClickAction(context, views, appWidgetId, config)
 
@@ -113,14 +113,25 @@ object PhotoWidgetRenderer {
 
     private fun placeholderViews(context: Context): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_photo)
-        showPlaceholder(views)
+        showPlaceholder(context, views, WidgetConfig())
         return views
     }
 
-    private fun showPlaceholder(views: RemoteViews) {
+    private fun showPlaceholder(context: Context, views: RemoteViews, config: WidgetConfig) {
         views.setViewVisibility(R.id.widget_image, View.GONE)
         views.setViewVisibility(R.id.widget_placeholder, View.VISIBLE)
         views.setInt(R.id.widget_root, "setBackgroundColor", 0xFF121212.toInt())
+        val placeholderText = if (config.widgetNumber > 0) {
+            val widgetTitle = context.getString(R.string.widget_number, config.widgetNumber)
+            context.getString(
+                R.string.widget_placeholder_with_number,
+                widgetTitle,
+                context.getString(R.string.no_photo_selected),
+            )
+        } else {
+            context.getString(R.string.no_photo_selected)
+        }
+        views.setTextViewText(R.id.widget_placeholder, placeholderText)
     }
 
     private fun bindClickAction(
