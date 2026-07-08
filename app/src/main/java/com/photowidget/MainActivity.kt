@@ -62,14 +62,11 @@ class MainActivity : ComponentActivity() {
                 var widgetIds by remember { mutableStateOf(intArrayOf()) }
                 var widgetNames by remember { mutableStateOf<Map<Int, String>>(emptyMap()) }
                 var editingWidgetId by remember { mutableIntStateOf(-1) }
-                var editingDefault by remember { mutableStateOf(false) }
-                var defaultConfig by remember { mutableStateOf(WidgetConfig()) }
                 val refreshKey = widgetsRefreshKey.intValue
                 val startWidgetId = intent?.getIntExtra(EXTRA_EDIT_WIDGET_ID, -1) ?: -1
 
                 LaunchedEffect(startWidgetId) {
                     if (startWidgetId != -1) {
-                        editingDefault = false
                         editingWidgetId = startWidgetId
                     }
                 }
@@ -96,7 +93,6 @@ class MainActivity : ComponentActivity() {
                     widgetNames = widgetIds.associateWith { widgetId ->
                         repository.getConfig(widgetId).displayName?.trim().orEmpty()
                     }.filterValues { it.isNotEmpty() }
-                    defaultConfig = repository.getDefaultConfig()
                 }
 
                 Scaffold(
@@ -139,32 +135,12 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        editingDefault -> {
-                            WidgetSettingsScreen(
-                                initialConfig = defaultConfig,
-                                onSave = { saved ->
-                                    scope.launch {
-                                        repository.saveDefaultConfig(saved)
-                                        defaultConfig = saved
-                                        editingDefault = false
-                                        Toast.makeText(
-                                            this@MainActivity,
-                                            R.string.save,
-                                            Toast.LENGTH_SHORT,
-                                        ).show()
-                                    }
-                                },
-                                onCancel = { editingDefault = false },
-                            )
-                        }
-
                         else -> {
                             MainScreen(
                                 modifier = Modifier.padding(padding),
                                 widgetIds = widgetIds,
                                 widgetNames = widgetNames,
                                 onEditWidget = { editingWidgetId = it },
-                                onEditDefault = { editingDefault = true },
                                 onPinWidget = {
                                     val appWidgetManager = AppWidgetManager.getInstance(this@MainActivity)
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
@@ -219,7 +195,6 @@ private fun MainScreen(
     widgetIds: IntArray,
     widgetNames: Map<Int, String>,
     onEditWidget: (Int) -> Unit,
-    onEditDefault: () -> Unit,
     onPinWidget: () -> Unit,
 ) {
     Column(
@@ -236,13 +211,6 @@ private fun MainScreen(
             Text(stringResource(R.string.pin_widget))
         }
 
-        OutlinedButton(
-            onClick = onEditDefault,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(stringResource(R.string.default_settings))
-        }
-
         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
         Text(
@@ -256,12 +224,12 @@ private fun MainScreen(
                 style = MaterialTheme.typography.bodyMedium,
             )
         } else {
-            widgetIds.forEach { widgetId ->
+            widgetIds.forEachIndexed { index, widgetId ->
                 OutlinedButton(
                     onClick = { onEditWidget(widgetId) },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    val title = widgetNames[widgetId] ?: stringResource(R.string.widget_number, widgetId)
+                    val title = widgetNames[widgetId] ?: stringResource(R.string.widget_number, index + 1)
                     Text(title)
                 }
             }
