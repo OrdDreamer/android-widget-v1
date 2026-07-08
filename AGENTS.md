@@ -65,8 +65,8 @@ adb logcat | grep -iE "PhotoWidgetRenderer|AppWidgetHostView|RemoteViews|FilePro
 
 1. Рендер офлайн у `WidgetImageCache.renderForWidget()`.
 2. Доставка в лаунчер **тільки** через `views.setImageViewBitmap()` у `PhotoWidgetRenderer`.
-3. `MAX_BITMAP_BYTES` ≈ **950_000** у `WidgetImageCache` — не перевищувати без тесту на Android 17.
-4. Форма (rounded/circle) **запікається в bitmap**, не через RemoteViews outline API.
+3. `MAX_BITMAP_BYTES` ≈ **2_100_000** (RGB_565) у `WidgetImageCache` — не перевищувати без тесту на Android 17.
+4. Форма (rounded/circle) **запікається в bitmap** з **прозорими** кутами (ARGB), не через RemoteViews outline API і не з фоном `#121212`.
 5. `widget_photo.xml`: `scaleType="fitXY"`, фон `#121212` у `initialLayout`.
 6. `FileProvider` у маніфесті **не використовувати** для `ImageView` у віджеті.
 
@@ -91,9 +91,12 @@ views.setImageViewBitmap(R.id.widget_image, bitmap)
 
 ### Якість vs стабільність
 
-- `setImageViewBitmap` обмежує payload (~950 KB). Великі віджети можуть трохи даунскейлитись — це прийнятний компроміс.
-- Покращення якості: кращий decode, один прохід rotate+scale, `RGB_565` для непрозорих варіантів — **всередині** ліміту байтів.
-- **Не** «вирішувати» якість через `setImageViewUri` / WebP у FileProvider — це ламає Android 17.
+- `setImageViewBitmap` обмежує payload (~2.1 MB). Для великих віджетів рендер намагається зайти в **повну** роздільність віджета в px, щоб `fitXY` не розтягував дрібний bitmap (головна причина розмиття).
+- **RGB_565** лише для непрозорих варіантів (`RECTANGLE` + `COVER`) — у 2× більше пікселів у тому ж ліміті.
+- **ARGB_8888 з прозорими кутами** для `ROUNDED_RECT`, `CIRCLE` і `CONTAIN` — **не** заповнювати `#121212` під кліпом (лаунчер показує прозорий фон).
+- Якщо повний розмір не вміщується — **один** пропорційний downscale, не цикл.
+- **Не** вирішувати якість через `setImageViewUri` — ламає Android 17.
+- Після зміни `MAX_BITMAP_BYTES` тестувати завантаження віджета на Android 17+.
 
 ### EXIF і прев’ю
 
