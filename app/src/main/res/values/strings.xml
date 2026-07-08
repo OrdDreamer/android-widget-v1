@@ -24,4 +24,12 @@
     <string name="pin_not_supported">Ваш лаунчер не підтримує закріплення віджета</string>
     <string name="configure_widget">Налаштування віджета</string>
     <string name="cancel">Скасувати</string>
+    <string name="widget_click_behavior">Натискання на віджет</string>
+    <string name="click_decorative">Без дії</string>
+    <string name="click_open_app">Відкрити додаток</string>
+    <string name="click_open_widget_settings">Відкрити цей віджет</string>
+    <string name="widget_display_name">Назва віджета (в додатку)</string>
+    <string name="widget_display_name_hint">Наприклад, Погода або Гори</string>
+    <string name="widget_info_label">Інфо</string>
+    <string name="widget_system_rounding_note">Launcher може додатково округляти зовнішні кути віджета.</string>
 </resources>

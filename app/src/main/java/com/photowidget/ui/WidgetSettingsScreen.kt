@@ -24,10 +24,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,9 +43,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.photowidget.R
+import com.photowidget.data.WidgetClickAction
 import com.photowidget.data.ScaleMode
 import com.photowidget.data.WidgetConfig
 import com.photowidget.data.WidgetShape
@@ -99,6 +103,14 @@ fun WidgetSettingsScreen(
         ) {
             Text(stringResource(R.string.select_photo))
         }
+        OutlinedTextField(
+            value = config.displayName.orEmpty(),
+            onValueChange = { config = config.copy(displayName = it.take(40).ifBlank { null }) },
+            label = { Text(stringResource(R.string.widget_display_name)) },
+            placeholder = { Text(stringResource(R.string.widget_display_name_hint)) },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+        )
 
         Text(
             text = stringResource(R.string.scale_mode),
@@ -109,6 +121,7 @@ fun WidgetSettingsScreen(
                 SegmentedButton(
                     selected = config.scaleMode == mode,
                     onClick = { config = config.copy(scaleMode = mode) },
+                    modifier = Modifier.height(48.dp),
                     shape = SegmentedButtonDefaults.itemShape(
                         index = index,
                         count = ScaleMode.entries.size,
@@ -119,6 +132,7 @@ fun WidgetSettingsScreen(
                             ScaleMode.COVER -> stringResource(R.string.cover)
                             ScaleMode.CONTAIN -> stringResource(R.string.contain)
                         },
+                        textAlign = TextAlign.Center,
                     )
                 }
             }
@@ -133,6 +147,7 @@ fun WidgetSettingsScreen(
                 SegmentedButton(
                     selected = config.shape == shape,
                     onClick = { config = config.copy(shape = shape) },
+                    modifier = Modifier.height(48.dp),
                     shape = SegmentedButtonDefaults.itemShape(
                         index = index,
                         count = WidgetShape.entries.size,
@@ -144,6 +159,7 @@ fun WidgetSettingsScreen(
                             WidgetShape.ROUNDED_RECT -> stringResource(R.string.shape_rounded)
                             WidgetShape.CIRCLE -> stringResource(R.string.shape_circle)
                         },
+                        textAlign = TextAlign.Center,
                     )
                 }
             }
@@ -161,6 +177,59 @@ fun WidgetSettingsScreen(
                 steps = 47,
                 modifier = Modifier.fillMaxWidth(),
             )
+        }
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            color = MaterialTheme.colorScheme.secondaryContainer,
+            tonalElevation = 1.dp,
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(R.string.widget_info_label),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                )
+                Text(
+                    text = stringResource(R.string.widget_system_rounding_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                )
+            }
+        }
+
+        Text(
+            text = stringResource(R.string.widget_click_behavior),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+            WidgetClickAction.entries.forEachIndexed { index, clickAction ->
+                SegmentedButton(
+                    selected = config.clickAction == clickAction,
+                    onClick = { config = config.copy(clickAction = clickAction) },
+                    modifier = Modifier.height(56.dp),
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = WidgetClickAction.entries.size,
+                    ),
+                ) {
+                    Text(
+                        when (clickAction) {
+                            WidgetClickAction.DECORATIVE -> stringResource(R.string.click_decorative)
+                            WidgetClickAction.OPEN_APP -> stringResource(R.string.click_open_app)
+                            WidgetClickAction.OPEN_WIDGET_SETTINGS -> stringResource(R.string.click_open_widget_settings)
+                        },
+                        textAlign = TextAlign.Center,
+                        minLines = 2,
+                    )
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))

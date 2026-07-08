@@ -10,12 +10,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.lifecycleScope
 import com.photowidget.data.WidgetConfig
 import com.photowidget.ui.WidgetSettingsScreen
 import com.photowidget.ui.theme.PhotoWidgetTheme
+import com.photowidget.widget.PhotoWidgetReceiver
 import com.photowidget.widget.WidgetUpdateHelper
+import com.photowidget.widget.WidgetUriHelper
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class WidgetConfigureActivity : ComponentActivity() {
 
@@ -38,7 +40,7 @@ class WidgetConfigureActivity : ComponentActivity() {
 
         val repository = (application as PhotoWidgetApp).widgetConfigRepository
 
-        lifecycleScope.launch {
+        runBlocking {
             repository.ensureWidgetConfig(appWidgetId)
         }
 
@@ -58,7 +60,21 @@ class WidgetConfigureActivity : ComponentActivity() {
                         onSave = { saved ->
                             scope.launch {
                                 repository.saveConfig(appWidgetId, saved)
+                                saved.imageUri?.let {
+                                    WidgetUriHelper.ensureReadPermission(
+                                        this@WidgetConfigureActivity,
+                                        android.net.Uri.parse(it),
+                                    )
+                                }
                                 WidgetUpdateHelper.updateWidget(this@WidgetConfigureActivity, appWidgetId)
+                                WidgetUpdateHelper.requestSystemUpdate(
+                                    this@WidgetConfigureActivity,
+                                    appWidgetId,
+                                )
+                                sendBroadcast(
+                                    Intent(PhotoWidgetReceiver.ACTION_WIDGETS_CHANGED)
+                                        .setPackage(packageName),
+                                )
 
                                 val resultValue = Intent().putExtra(
                                     AppWidgetManager.EXTRA_APPWIDGET_ID,
