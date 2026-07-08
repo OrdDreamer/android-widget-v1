@@ -23,5 +23,5 @@ data class WidgetConfig(
     val scaleMode: ScaleMode = ScaleMode.COVER,
     val shape: WidgetShape = WidgetShape.ROUNDED_RECT,
     val cornerRadiusDp: Int = 16,
-    val clickAction: WidgetClickAction = WidgetClickAction.DECORATIVE,
+    val clickAction: WidgetClickAction = WidgetClickAction.OPEN_WIDGET_SETTINGS,
 )

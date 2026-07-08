@@ -16,8 +16,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -25,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -62,6 +66,7 @@ class MainActivity : ComponentActivity() {
                 var widgetIds by remember { mutableStateOf(intArrayOf()) }
                 var widgetNames by remember { mutableStateOf<Map<Int, String>>(emptyMap()) }
                 var editingWidgetId by remember { mutableIntStateOf(-1) }
+                var deletingWidgetId by remember { mutableIntStateOf(-1) }
                 val refreshKey = widgetsRefreshKey.intValue
                 val startWidgetId = intent?.getIntExtra(EXTRA_EDIT_WIDGET_ID, -1) ?: -1
 
@@ -141,6 +146,7 @@ class MainActivity : ComponentActivity() {
                                 widgetIds = widgetIds,
                                 widgetNames = widgetNames,
                                 onEditWidget = { editingWidgetId = it },
+                                onDeleteWidget = { deletingWidgetId = it },
                                 onPinWidget = {
                                     val appWidgetManager = AppWidgetManager.getInstance(this@MainActivity)
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
@@ -175,6 +181,40 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+
+                if (deletingWidgetId != -1) {
+                    AlertDialog(
+                        onDismissRequest = { deletingWidgetId = -1 },
+                        title = { Text(stringResource(R.string.delete_widget_title)) },
+                        text = { Text(stringResource(R.string.delete_widget_message)) },
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    val widgetId = deletingWidgetId
+                                    deletingWidgetId = -1
+                                    scope.launch {
+                                        repository.deleteConfig(widgetId)
+                                        WidgetUpdateHelper.updateWidget(this@MainActivity, widgetId)
+                                        WidgetUpdateHelper.requestSystemUpdate(this@MainActivity, widgetId)
+                                        widgetsRefreshKey.intValue++
+                                        Toast.makeText(
+                                            this@MainActivity,
+                                            R.string.delete_widget_done,
+                                            Toast.LENGTH_LONG,
+                                        ).show()
+                                    }
+                                },
+                            ) {
+                                Text(stringResource(R.string.delete_widget_confirm))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { deletingWidgetId = -1 }) {
+                                Text(stringResource(R.string.cancel))
+                            }
+                        },
+                    )
+                }
             }
         }
     }
@@ -195,6 +235,7 @@ private fun MainScreen(
     widgetIds: IntArray,
     widgetNames: Map<Int, String>,
     onEditWidget: (Int) -> Unit,
+    onDeleteWidget: (Int) -> Unit,
     onPinWidget: () -> Unit,
 ) {
     Column(
@@ -225,12 +266,23 @@ private fun MainScreen(
             )
         } else {
             widgetIds.forEachIndexed { index, widgetId ->
-                OutlinedButton(
-                    onClick = { onEditWidget(widgetId) },
+                Row(
                     modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    val title = widgetNames[widgetId] ?: stringResource(R.string.widget_number, index + 1)
-                    Text(title)
+                    OutlinedButton(
+                        onClick = { onEditWidget(widgetId) },
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        val title = widgetNames[widgetId] ?: stringResource(R.string.widget_number, index + 1)
+                        Text(title)
+                    }
+                    OutlinedButton(
+                        onClick = { onDeleteWidget(widgetId) },
+                        modifier = Modifier.width(110.dp),
+                    ) {
+                        Text(stringResource(R.string.delete_widget_short))
+                    }
                 }
             }
         }

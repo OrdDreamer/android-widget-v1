@@ -32,4 +32,9 @@
     <string name="widget_display_name_hint">Наприклад, Погода або Гори</string>
     <string name="widget_info_label">Інфо</string>
     <string name="widget_system_rounding_note">Launcher може додатково округляти зовнішні кути віджета.</string>
+    <string name="delete_widget_short">Скинути</string>
+    <string name="delete_widget_title">Скинути віджет</string>
+    <string name="delete_widget_message">Це очистить фото та налаштування цього віджета і поверне його в початковий стан. Віджет залишиться на робочому столі.</string>
+    <string name="delete_widget_confirm">Скинути</string>
+    <string name="delete_widget_done">Віджет скинуто до початкового стану.</string>
 </resources>

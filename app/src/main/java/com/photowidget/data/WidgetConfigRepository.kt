@@ -101,7 +101,7 @@ class WidgetConfigRepository(private val context: Context) {
             cornerRadiusDp = this[keyCornerRadius(base)] ?: 16,
             clickAction = this[keyClickAction(base)]?.let { name ->
                 WidgetClickAction.entries.firstOrNull { it.name == name }
-            } ?: WidgetClickAction.DECORATIVE,
+            } ?: WidgetClickAction.OPEN_WIDGET_SETTINGS,
         )
     }
 
