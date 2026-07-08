@@ -140,7 +140,12 @@ object PhotoWidgetRenderer {
         appWidgetId: Int,
         config: WidgetConfig,
     ) {
-        val pendingIntent = when (config.clickAction) {
+        val effectiveAction = if (config.imageUri == null) {
+            WidgetClickAction.OPEN_WIDGET_SETTINGS
+        } else {
+            config.clickAction
+        }
+        val pendingIntent = when (effectiveAction) {
             WidgetClickAction.DECORATIVE -> createNoopPendingIntent(context, appWidgetId)
             WidgetClickAction.OPEN_APP -> createOpenAppPendingIntent(context, appWidgetId)
             WidgetClickAction.OPEN_WIDGET_SETTINGS -> createOpenWidgetPendingIntent(context, appWidgetId)

@@ -38,7 +38,12 @@ class WidgetConfigRepository(private val context: Context) {
 
     suspend fun getDefaultConfig(): WidgetConfig {
         return context.dataStore.data.map { prefs ->
-            prefs.toWidgetConfig(defaultConfigKey)
+            val raw = prefs.toWidgetConfig(defaultConfigKey)
+            if (raw.clickAction == WidgetClickAction.DECORATIVE) {
+                raw.copy(clickAction = WidgetClickAction.OPEN_WIDGET_SETTINGS)
+            } else {
+                raw
+            }
         }.first()
     }
 
@@ -52,7 +57,12 @@ class WidgetConfigRepository(private val context: Context) {
         val prefs = context.dataStore.data.first()
         val key = keyFor(appWidgetId)
         if (!prefs.contains(keyScaleMode(key))) {
-            val default = prefs.toWidgetConfig(defaultConfigKey)
+            val rawDefault = prefs.toWidgetConfig(defaultConfigKey)
+            val default = if (rawDefault.clickAction == WidgetClickAction.DECORATIVE) {
+                rawDefault.copy(clickAction = WidgetClickAction.OPEN_WIDGET_SETTINGS)
+            } else {
+                rawDefault
+            }
             val nextNumber = prefs[nextWidgetNumberKey] ?: 1
             val initial = default.copy(widgetNumber = nextNumber, displayName = null)
             context.dataStore.edit { mutablePrefs ->
