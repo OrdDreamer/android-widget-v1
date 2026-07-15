@@ -14,6 +14,7 @@
 
 - `[ОПИС]` → [../shared/product-description.md](../shared/product-description.md)
 - Аудиторія, USP, страхи (ASO / «занадто просто») → [../01-product-discovery/output.md](../01-product-discovery/output.md)
+- Конкуренти / keywords → [../shared/competitor-research.md](../shared/competitor-research.md)
 - Готові ASO-меседжі (якщо вже є) → [../03-aso-branding/](../03-aso-branding/)
 - Обмеження: solo, мало часу, lean EN / глобальний ринок
 

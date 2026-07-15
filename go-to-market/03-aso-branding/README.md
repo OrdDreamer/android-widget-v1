@@ -15,7 +15,8 @@
 - `[ОПИС]` додатка → [../shared/product-description.md](../shared/product-description.md)
 - Цільова аудиторія → розділи Target Audience / Personas з [../01-product-discovery/output.md](../01-product-discovery/output.md)
 - USP / pitch / болі → той самий `output.md`
-- Відкриті питання Store-образу → [../shared/decisions-log.md](../shared/decisions-log.md)
+- Конкуренти, keywords, Store-меседж lean → [../shared/competitor-research.md](../shared/competitor-research.md)
+- Рішення (назва crowded, monetization open) → [../shared/decisions-log.md](../shared/decisions-log.md)
 
 ## Артефакти після проходження
 

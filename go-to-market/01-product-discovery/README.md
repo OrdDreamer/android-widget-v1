@@ -14,6 +14,7 @@
 
 - [session-notes.md](session-notes.md) — уточнюючі відповіді (факти з чату)
 - [output.md](output.md) — Product Summary … Elevator Pitch + рекомендації
+- [../shared/competitor-research.md](../shared/competitor-research.md) — конкурентний зріз Google Play (перенесено в `shared/`)
 
 ## Що далі
 
@@ -21,4 +22,5 @@
 
 - [../shared/product-description.md](../shared/product-description.md)
 - [output.md](output.md) (аудиторія, USP, pitch)
+- [../shared/competitor-research.md](../shared/competitor-research.md) (конкуренти, Store-меседж, ASO keywords)
 - [../shared/decisions-log.md](../shared/decisions-log.md)

@@ -19,6 +19,7 @@
 | Етап | Статус | Артефакти |
 |------|--------|-----------|
 | 01 Product Discovery | done | [session-notes](01-product-discovery/session-notes.md), [output](01-product-discovery/output.md) |
+| — конкурентний зріз | done | [shared/competitor-research.md](shared/competitor-research.md) |
 | 02 Play Release | pending | — |
 | 03 ASO & Branding | pending | — |
 | 04 Growth Marketing | pending | — |
@@ -30,6 +31,7 @@
 
 - [shared/product-description.md](shared/product-description.md) — канонічний опис продукту
 - [shared/decisions-log.md](shared/decisions-log.md) — закриті й відкриті рішення
+- [shared/competitor-research.md](shared/competitor-research.md) — зріз Play, keywords, Store-меседж
 - вивід попередніх етапів (напр. `01-product-discovery/output.md` для ASO)
 
 ## Як працювати з етапом
