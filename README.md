@@ -93,6 +93,8 @@ app/src/main/java/com/photowidget/
 
 Для AI-агентів і розробників, які змінюють віджет: **`AGENTS.md`** (критичні обмеження рендеру) та **`.cursor/rules/widget-rendering.mdc`**.
 
+Публікація в Google Play і маркетинг: **[`go-to-market/`](go-to-market/)**.
+
 ## Ліцензія
 
 MIT
