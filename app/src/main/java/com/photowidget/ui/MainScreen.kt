@@ -116,7 +116,6 @@ private fun EmptyWidgetsState(onPinWidget: () -> Unit) {
             text = stringResource(R.string.empty_subtitle),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = (-10).dp),
         )
 
         EmptyStep(number = 1, text = stringResource(R.string.empty_step_1))

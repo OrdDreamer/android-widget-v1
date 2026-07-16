@@ -143,9 +143,7 @@ fun WidgetSettingsScreen(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = (-14).dp),
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
 
