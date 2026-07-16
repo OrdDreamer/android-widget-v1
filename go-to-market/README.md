@@ -30,6 +30,8 @@
 Підставляй у промпти замість `[ОПИС]`:
 
 - [shared/product-description.md](shared/product-description.md) — канонічний опис продукту
+- [shared/design-brief.md](shared/design-brief.md) — повне ТЗ для UI/UX дизайну v1
+- [shared/design-brief-claude-design.md](shared/design-brief-claude-design.md) — короткий промпт для Claude Design (усі екрани)
 - [shared/decisions-log.md](shared/decisions-log.md) — закриті й відкриті рішення
 - [shared/kpi-metrics.md](shared/kpi-metrics.md) — метрики успіху
 - [shared/competitor-research.md](shared/competitor-research.md) — зріз Play, keywords, Store-меседж
