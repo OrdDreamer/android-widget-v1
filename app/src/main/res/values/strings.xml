@@ -29,16 +29,17 @@
     <string name="click_decorative">Без дії</string>
     <string name="click_open_app">Відкрити додаток</string>
     <string name="click_open_widget_settings">Відкрити цей віджет</string>
-    <string name="widget_display_name">Назва віджета (в додатку)</string>
-    <string name="widget_display_name_hint">Наприклад, Погода або Гори</string>
+    <string name="widget_display_name">Назва (необов\'язково)</string>
+    <string name="widget_display_name_hint">Напр. Мама</string>
+    <string name="display_name_counter">%1$d/40</string>
     <string name="widget_info_label">Інфо</string>
-    <string name="widget_system_rounding_note">Launcher може додатково округляти зовнішні кути віджета.</string>
+    <string name="widget_system_rounding_note">Launcher може додатково округляти зовнішні кути віджета</string>
     <string name="delete_widget_short">Скинути</string>
     <string name="delete_widget_title">Скинути віджет</string>
-    <string name="delete_widget_message">Це очистить фото та налаштування цього віджета і поверне його в початковий стан. Віджет залишиться на робочому столі.</string>
+    <string name="delete_widget_message">Це очистить фото та налаштування. Віджет залишиться на робочому столі.</string>
     <string name="delete_widget_confirm">Скинути</string>
     <string name="delete_widget_done">Віджет скинуто до початкового стану.</string>
-    <string name="image_rotation">Поворот зображення</string>
+    <string name="image_rotation">Поворот</string>
     <string name="rotate_counterclockwise">Проти годинникової</string>
     <string name="rotate_clockwise">За годинниковою</string>
     <string name="rotation_degrees">%1$d°</string>
@@ -52,4 +53,22 @@
     <string name="alignment_top_right">Верх. правий</string>
     <string name="alignment_bottom_left">Нижн. лівий</string>
     <string name="alignment_bottom_right">Нижн. правий</string>
+
+    <string name="navigate_back">Назад</string>
+    <string name="app_settings_title">Налаштування</string>
+    <string name="settings_language">Мова</string>
+    <string name="settings_language_system_default">Системна за замовчуванням</string>
+    <string name="settings_about">Про додаток</string>
+    <string name="ad_banner_placeholder">Ad · 320×50</string>
+    <string name="empty_headline">Тримайте важливе фото на виду</string>
+    <string name="empty_subtitle">Окремо від шпалер — одне фото на віджет</string>
+    <string name="empty_step_1">Додайте на робочий стіл</string>
+    <string name="empty_step_2">Розмістіть віджет</string>
+    <string name="empty_step_3">Оберіть фото та збережіть</string>
+    <string name="empty_pin_fallback">Не бачите «Додати»? Довгий тап на робочий стіл → Віджети</string>
+    <string name="empty_illustration_wallpaper">Wallpaper</string>
+    <string name="empty_illustration_widget">Widget</string>
+    <string name="photo_stays_on_device">Фото залишаються на цьому пристрої</string>
+    <string name="photo_load_error">Не вдалося завантажити фото</string>
+    <string name="photo_load_retry">Повторити</string>
 </resources>

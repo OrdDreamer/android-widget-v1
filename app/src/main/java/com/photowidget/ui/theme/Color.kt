@@ -1,0 +1,37 @@
+package com.photowidget.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+// Tokens from go-to-market/design mockups (OKLCH hue ~174, warm calm teal)
+
+val LightPrimary = Color(0xFF006B63)
+val LightOnPrimary = Color(0xFFFCFFFE)
+val LightPrimaryContainer = Color(0xFFB8EDE4)
+val LightOnPrimaryContainer = Color(0xFF003732)
+val LightSecondaryContainer = Color(0xFFD0F0E9)
+val LightOnSecondaryContainer = Color(0xFF003732)
+val LightBackground = Color(0xFFF8F7F5)
+val LightSurface = Color(0xFFF8F7F5)
+val LightOnSurface = Color(0xFF333230)
+val LightSurfaceVariant = Color(0xFFF0EFEC)
+val LightOnSurfaceVariant = Color(0xFF6E6D6A)
+val LightOutline = Color(0xFFC4C3C0)
+val LightOutlineVariant = Color(0xFFE0DFDC)
+val LightError = Color(0xFFBA1A1A)
+val LightOnError = Color(0xFFFFFFFF)
+
+val DarkPrimary = Color(0xFF5DD9CB)
+val DarkOnPrimary = Color(0xFF003732)
+val DarkPrimaryContainer = Color(0xFF00504A)
+val DarkOnPrimaryContainer = Color(0xFFB8EDE4)
+val DarkSecondaryContainer = Color(0xFF1A3F3B)
+val DarkOnSecondaryContainer = Color(0xFFB8EDE4)
+val DarkBackground = Color(0xFF1C1B19)
+val DarkSurface = Color(0xFF1C1B19)
+val DarkOnSurface = Color(0xFFEBEAE8)
+val DarkSurfaceVariant = Color(0xFF333230)
+val DarkOnSurfaceVariant = Color(0xFFB0AFAC)
+val DarkOutline = Color(0xFF6E6D6A)
+val DarkOutlineVariant = Color(0xFF484746)
+val DarkError = Color(0xFFFFB4AB)
+val DarkOnError = Color(0xFF690005)
