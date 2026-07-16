@@ -71,7 +71,7 @@
 
 | Елемент | Поведінка |
 |---------|-----------|
-| Top app bar | Назва додатку |
+| Top app bar | Назва додатку + іконка **⚙** (або ⋮) → App settings |
 | Primary CTA | «Додати на робочий стіл» → system pin flow (`requestPinAppWidget`) |
 | Секція «Активні віджети» | Список усіх pinned instances |
 | Рядок віджета | Мініатюра (52dp, форма як у config) + назва (або «Віджет #N») + розмір у клітинках (напр. `2x2`) |
@@ -130,9 +130,26 @@
 - Title + пояснення: очищає фото та settings, віджет лишається на столі.
 - Confirm / Cancel.
 
-### 4.5. Системні / поза scope дизайну v1
+### 4.5. App settings (app-level, не widget settings)
 
-- Немає: About, Settings app-level, Default widget settings, Paywall, Account.
+**Рішення:** невеликий розділ **на майбутнє**, не orphan-перемикач мови на головному.
+
+| Елемент | v1 |
+|---------|-----|
+| Вхід | ⚙ або ⋮ у TopAppBar головного екрана |
+| Екран | Короткий список «Settings» / «App settings» |
+| **Language** | Є зараз: список мов **або** системний Android 13+ per-app language picker |
+| Default | Мова системи |
+| Майбутнє (рядки можна ховати, доки порожні) | About, Privacy, (опційно) ads / support |
+
+**Не робити:** language chip / switcher на empty state чи в списку віджетів; мову всередині widget settings (photo/shape); великий Settings hub (акаунти, sync).
+
+Це **окремо** від екрана налаштувань віджета (§4.3).
+
+### 4.6. Системні / поза scope дизайну v1
+
+- Немає: Default widget settings, Paywall, Account, cloud.
+- About / Privacy — лише як майбутні пункти в App settings (можна не малювати контент у v1).
 - Widget на home screen — **не** part of in-app UI design (RemoteViews); але прев’ю в додатку має **візуально збігатися**.
 
 ---
@@ -193,6 +210,8 @@ Deliverables:
 ## 7. Локалізація UI
 
 **Рішення:** максимальна підтримка **основних мов на старті** (окремо від Store listing, де EN primary).
+
+**Вибір мови в UI:** через **App settings → Language** (§4.5), не окремим перемикачем на головному. Перевага — Android 13+ system per-app locales API.
 
 **Мови v1 (рекомендований мінімум для дизайну — перевірити layout на довгих рядках):**
 
@@ -261,10 +280,11 @@ Deliverables:
 
 ## 11. Deliverables checklist (дизайн-інструмент)
 
-- [ ] Головний екран — список + empty state + ad zone
+- [ ] Головний екран — список + empty state + ad zone (+ gear у app bar)
 - [ ] Головний екран — 2+ віджети в списку
-- [ ] Налаштування — no photo / with photo
-- [ ] Налаштування — rounded rect + slider visible
+- [ ] App settings — Language (+ місце під майбутні пункти)
+- [ ] Налаштування віджета — no photo / with photo
+- [ ] Налаштування віджета — rounded rect + slider visible
 - [ ] Dark mode variants (key screens)
 - [ ] Dialog reset
 - [ ] App icon (adaptive)
@@ -295,6 +315,7 @@ Deliverables:
 - Freemium paywall
 - In-widget ads
 - Custom gallery (лише system Photo Picker)
+- Orphan language switcher на головному / у empty state
 
 ---
 
@@ -303,3 +324,4 @@ Deliverables:
 | Дата | Зміна |
 |------|-------|
 | Jul 2026 | v1.0 — опитувальник + recommendation emotion-first |
+| Jul 2026 | v1.1 — App settings + Language (не orphan switcher) |

@@ -27,6 +27,11 @@
 | **Privacy в UI v1** | closed | **Не акцентувати**; Store listing; info block — optional low priority |
 | **Головний екран** | closed | Як зараз за змістом + **polished empty state** |
 | **Design brief** | closed | [design-brief.md](design-brief.md) |
+| **Primary color (working)** | closed | Soft teal-green ~`#3F6F66`; warm neutrals; не purple / coral / amber |
+| **Empty-state illustration** | closed | Soft blob/organic + photo placeholder (wallpaper + widget) |
+| **Typeface** | closed | Roboto (Material default) |
+| **Default shape in mockups** | closed | Rounded rectangle (circle/rect лишаються в settings) |
+| **App settings / Language** | closed | Gear у TopAppBar → App settings → Language; розділ на майбутнє (About/Privacy); не orphan switcher на головному |
 
 ## Відкрито
 

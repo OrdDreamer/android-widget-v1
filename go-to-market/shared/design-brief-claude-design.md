@@ -35,7 +35,7 @@ Monetization (layout only)
 Screens to design (all of them — small app)
 
 1) Main — empty state (no widgets yet)
-- Top app bar: "Photo Widget"
+- Top app bar: "Photo Widget" + settings gear (or ⋮) → App settings
 - Hero empty state:
   - Headline (emotion): "Keep an important photo in sight"
   - Subhead (wallpaper contrast): "Separate from wallpaper — one photo per widget"
@@ -47,10 +47,18 @@ Screens to design (all of them — small app)
   - Reserve ~50–90dp for adaptive banner; never cover primary CTAs
 
 2) Main — with widgets (2–3 items)
-- Same top bar + primary CTA "Add to home screen"
+- Same top bar (with settings gear) + primary CTA "Add to home screen"
 - Section: "Active widgets"
 - Each row: thumbnail ~52dp (shape matches widget: rect / rounded / circle) + title (e.g. "Mom" or "Widget #1") + size like "2x2" + actions Edit / Reset
 - Banner ad zone; list scrolls if needed
+
+2b) App settings (app-level — NOT widget settings)
+- Opened from main TopAppBar gear / ⋮
+- Short list screen titled "Settings"
+- Row: Language — opens language list OR Android 13+ system per-app language picker
+- Default = system language
+- Leave visual room for future rows (About, Privacy) — can show as disabled/hidden placeholders or omit content; do NOT build a huge settings hub
+- Do NOT put a language switcher on the main empty state, widget list, or inside widget settings
 
 3) Widget settings (single scroll; same layout for in-app edit and launcher configure)
 Order top → bottom:
@@ -90,6 +98,7 @@ Exact EN copy to prefer (can polish wording slightly, keep meaning)
 - Empty subhead: "Separate from wallpaper — one photo per widget"
 - CTA: "Add to home screen"
 - Section: "Active widgets"
+- App bar / screen: "Settings", "Language"
 - Buttons: "Choose photo", "Save", "Cancel", "Edit", "Reset"
 - Preview empty: "No photo selected"
 - Scale: Cover | Contain
@@ -101,21 +110,26 @@ Also deliver
 - Simple design tokens: primary, surfaces, on-surface, info/secondary container — light + dark
 - Spacing: 8dp grid, ~16–20dp horizontal padding
 - Do NOT use default Material purple (#6750A4) as brand primary
+- Preferred primary: soft teal-green ~#3F6F66; warm neutral surfaces; photo is hero
 
 Out of scope (do NOT invent)
-- Onboarding carousels, slideshow, albums, lock screen, cloud, accounts, paywall, About/app settings
+- Onboarding carousels, slideshow, albums, lock screen, cloud, accounts, paywall
+- Orphan language switcher on main/empty state; language inside widget settings
+- Full About/Privacy content pages (rows OK as future placeholders)
 - Home-screen widget chrome beyond preview accuracy
 - Privacy as a hero message (optional tiny note under Choose photo is OK, not required)
 - In-widget ads
 
 Output
-- Interactive Android phone mockups covering screens 1–4 above
-- Light + dark for main empty, main with list, and settings (with photo)
-- Include settings variants A/B and at least one of loading or error preview
+- Interactive Android phone mockups covering screens 1–4 above + App settings (2b)
+- Light + dark for main empty, main with list, and widget settings (with photo)
+- Include widget settings variants A/B and at least one of loading or error preview
 - Clean, calm UI ready for Google Play v1
 ```
 
 ---
+
+
 
 ## How to use
 
@@ -123,9 +137,13 @@ Output
 2. Optional: also upload `design-brief.md` and say: *Use uploaded brief only if something conflicts; prefer this prompt.*
 3. Iterate per screen with comments; don’t re-paste the full brief each time.
 
+
+
 ## Optional follow-ups (after first draft)
 
 - `Tighten empty state: less text, stronger illustration of wallpaper vs widget.`
 - `Make alignment a compact icon 3×3, no long labels.`
 - `Show German strings on settings to stress-test segmented buttons.`
 - `App icon only: 3 variants, warm calm, no camera cliché.`
+- `App settings: Language row + subtle future About placeholder; light+dark.`
+
