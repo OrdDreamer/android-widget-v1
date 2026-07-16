@@ -12,19 +12,21 @@
 | USP формулювання (wallpaper-contrast) | closed | Discovery + [competitor-research](competitor-research.md) |
 | Порядок GTM: Discovery → Play → ASO → Growth → Audit | closed | prompts framework |
 | Конкурентний зріз photo-widget apps | closed | [competitor-research.md](competitor-research.md) (топ-8 listings, Jul 2026) |
-| Головний образ Store (старт) | closed (lean) | emotion + wallpaper-contrast; естетика на скрінах, не як головний слоган ([competitor-research](competitor-research.md) Implications) |
-| 1–2 продуктові фічі перед v1 через конкурентів | closed (не потрібно) | Slideshow не потрібен для wedge; пріоритет — ясність listing / framing / privacy one-liner, не нові фічі |
+| Головний образ Store (старт) | closed (lean) | emotion + wallpaper-contrast; естетика на скрінах, не як головний слоган |
+| 1–2 продуктові фічі перед v1 через конкурентів | closed (не потрібно) | Slideshow не потрібен; фокус — listing / framing / privacy one-liner |
+| **Монетизація v1** | closed | **Free + реклама в додатку** (не у віджеті). **Freemium пізніше**, якщо буде traction |
+| **Store listing (Play Console)** | closed | **EN primary** на старті; **UA по можливості**; інші мови сторінки — пізніше |
+| **Локалізація UI додатку** | closed (ціль) | **Максимум мов у застосунку** (окремо від Store listing); пріоритет реалізації — на етапі розробки перед/під реліз |
+| **Proxy-метрики успіху** | closed | Див. [kpi-metrics.md](kpi-metrics.md) |
 
 ## Відкрито
 
 | Питання | Статус | Нотатки |
 |---------|--------|---------|
-| Монетизація (free / ads / freemium) | open | Схиляється до ads або freemium; можливий free. Material = no-ads peer; більшість volume = ads+IAP |
-| Ринок / мова listing | open (lean EN) | Пріоритет більший ринок; СНД як можливий особистий канал |
+| Фінальна назва в Play (exact “Photo Widget”?) | open | Crowded (ZipoApps); вирішити на етапі **03 ASO** |
 | Первинний сегмент (emotional vs stylist) | open (lean emotion) | Store-меседж стартує з emotion + wallpaper-contrast; stylist — на скрінах |
-| Фінальна назва в Play (exact “Photo Widget”?) | open | Ім’я crowded (ZipoApps); вирішити на етапі ASO |
-| Proxy-метрики утримання (крім downloads) | open | Рекомендовано в Discovery output |
 | Покадровий розбір скрінів топ-5 | optional | Перед малюванням своїх скрінів у ASO |
+| Конкретний freemium paywall (що платне) | open | Лише після traction; не блокує v1 |
 
 ## Optional backlog (не блокує 02)
 

@@ -45,4 +45,18 @@ Kotlin, Jetpack Compose + Material 3, AppWidgetProvider + RemoteViews, DataStore
 
 - Emotional keepers — важливе фото завжди на виду
 - Homescreen stylists — кілька фото поруч зі шпалерами
-- Ринок: пріоритет EN / глобальний Play
+- Ринок: глобальний Play; Store listing EN primary, UA по можливості
+
+## Монетизація (v1)
+
+- Free + реклама в додатку (не у віджеті).
+- Freemium — після traction; деталі paywall TBD.
+
+## Локалізація
+
+- **Store listing:** EN primary → UA по можливості → інші пізніше.
+- **UI додатку:** максимум мов (окрема задача розробки).
+
+## Метрики
+
+Див. [kpi-metrics.md](kpi-metrics.md).

@@ -84,9 +84,9 @@ Photo Widget допомагає тримати важливі фото на Andr
 | 1 | Конкурентний зріз 5–10 apps | **done** → [competitor-research](../shared/competitor-research.md) |
 | 2 | Один головний Store-меседж | **done (lean):** emotion + wallpaper-contrast; естетика на скрінах |
 | 3 | 1–2 продуктові фічі через конкурентів | **не потрібно**; slideshow розмиває wedge; фокус — ясність listing / framing / privacy one-liner |
-| 4 | Proxy утримання (крім downloads) | open |
-| 5 | Монетизація | open (впливає на Data Safety / ads UX) |
-| 6 | EN як основний listing | lean, ще open формально |
+| 4 | Proxy утримання (крім downloads) | **done** → [kpi-metrics](../shared/kpi-metrics.md) |
+| 5 | Монетизація | **done:** free + ads у додатку; freemium пізніше |
+| 6 | EN як основний listing | **done:** EN primary; UA по можливості; UI — max мов |
 | 7 | Стабільність ≥2 віджети / Android 17+ | перед масштабом трафіку |
 
 **Ще зробити перед / під час ASO:** вирішити фінальну назву (exact “Photo Widget” crowded); optional покадровий розбір скрінів топ-5.
@@ -97,8 +97,8 @@ Photo Widget допомагає тримати важливі фото на Andr
 |-----------|--------|
 | Немає системного порівняння з photo-widget apps | **знято** (listings зріз done; покадрові скріни optional) |
 | Два сегменти без вибору | **частково:** Store lean = emotion + wallpaper-contrast |
-| Успіх = лише downloads | open |
-| Монетизація відкрита | open |
+| Успіх = лише downloads | **знято** — додано proxy KPI |
+| Монетизація відкрита | **знято** — free + ads v1 |
 | Exact name crowded / generic aesthetic | актуальний ризик ASO |
 | Простота без гострого contrast | mitigated messaging-планом; треба виконати в listing |
 

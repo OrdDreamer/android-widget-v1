@@ -14,7 +14,8 @@
 
 - `[ОПИС]` → [../shared/product-description.md](../shared/product-description.md)
 - Поточний стан — описати чесно (MVP / готовий / тестування)
-- Рішення з [../shared/decisions-log.md](../shared/decisions-log.md) (зокрема відкрита монетизація — впливає на Data Safety / ads)
+- Рішення з [../shared/decisions-log.md](../shared/decisions-log.md) — **монетизація: free + ads у додатку** (Data Safety, ad SDK, політики)
+- [../shared/kpi-metrics.md](../shared/kpi-metrics.md) — які події/аналітику закласти
 - Контекст категорії (no-ads peer Material vs ads+IAP volume) → [../shared/competitor-research.md](../shared/competitor-research.md)
 
 ## Артефакти після проходження

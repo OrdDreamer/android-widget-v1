@@ -31,6 +31,7 @@
 
 - [shared/product-description.md](shared/product-description.md) — канонічний опис продукту
 - [shared/decisions-log.md](shared/decisions-log.md) — закриті й відкриті рішення
+- [shared/kpi-metrics.md](shared/kpi-metrics.md) — метрики успіху
 - [shared/competitor-research.md](shared/competitor-research.md) — зріз Play, keywords, Store-меседж
 - вивід попередніх етапів (напр. `01-product-discovery/output.md` для ASO)
 
