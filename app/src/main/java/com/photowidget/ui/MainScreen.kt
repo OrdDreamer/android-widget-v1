@@ -50,6 +50,8 @@ import com.photowidget.ui.theme.brandContainerBrush
 import com.photowidget.ui.theme.brandTitleBrush
 import com.photowidget.ui.theme.heroCardBrush
 import com.photowidget.ui.theme.screenBackgroundBrush
+import com.photowidget.ui.photoWidgetNavigationBarPadding
+import com.photowidget.ui.photoWidgetSafeAreaPadding
 
 data class WidgetListItem(
     val title: String,
@@ -71,7 +73,8 @@ fun MainScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(screenBackgroundBrush(dark)),
+            .background(screenBackgroundBrush(dark))
+            .photoWidgetSafeAreaPadding(),
     ) {
         Column(
             modifier = Modifier
@@ -120,7 +123,9 @@ fun MainScreen(
         }
 
         AdBannerPlaceholder(
-            modifier = Modifier.padding(horizontal = 22.dp, vertical = 12.dp),
+            modifier = Modifier
+                .padding(horizontal = 22.dp, vertical = 12.dp)
+                .photoWidgetNavigationBarPadding(),
         )
     }
 }
@@ -130,7 +135,7 @@ private fun MainHeader(onOpenSettings: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 22.dp, end = 22.dp, top = 26.dp),
+            .padding(start = 22.dp, end = 22.dp, top = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top,
     ) {

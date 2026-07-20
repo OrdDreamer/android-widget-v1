@@ -31,6 +31,7 @@ import com.photowidget.ui.AppSettingsScreen
 import com.photowidget.ui.MainScreen
 import com.photowidget.ui.WidgetListItem
 import com.photowidget.ui.WidgetSettingsScreen
+import com.photowidget.ui.enablePhotoWidgetEdgeToEdge
 import com.photowidget.ui.theme.PhotoWidgetTheme
 import com.photowidget.widget.PhotoWidgetReceiver
 import com.photowidget.widget.WidgetUpdateHelper
@@ -43,6 +44,7 @@ class MainActivity : ComponentActivity() {
     private val widgetsRefreshKey = mutableIntStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enablePhotoWidgetEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         val repository = (application as PhotoWidgetApp).widgetConfigRepository

@@ -12,6 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.photowidget.data.WidgetConfig
 import com.photowidget.ui.WidgetSettingsScreen
+import com.photowidget.ui.enablePhotoWidgetEdgeToEdge
 import com.photowidget.ui.theme.PhotoWidgetTheme
 import com.photowidget.widget.PhotoWidgetReceiver
 import com.photowidget.widget.WidgetUpdateHelper
@@ -24,6 +25,7 @@ class WidgetConfigureActivity : ComponentActivity() {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enablePhotoWidgetEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         appWidgetId = intent?.extras?.getInt(
