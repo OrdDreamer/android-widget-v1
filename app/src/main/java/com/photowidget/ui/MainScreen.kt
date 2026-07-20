@@ -166,7 +166,7 @@ private fun MainHeader(onOpenSettings: () -> Unit) {
             Icon(
                 imageVector = Icons.Outlined.Settings,
                 contentDescription = stringResource(R.string.app_settings_title),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
     }

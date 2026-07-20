@@ -1,5 +1,8 @@
 package com.photowidget.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
@@ -52,9 +55,16 @@ fun brandTitleBrush(): Brush = Brush.horizontalGradient(
     colors = listOf(GradientTitleStart, GradientTitleEnd),
 )
 
-fun brandContainerBrush(): Brush = Brush.linearGradient(
-    colors = listOf(Color(0xFFE4D9F8), Color(0xFFE8CFF5)),
-)
+@Composable
+fun brandContainerBrush(): Brush {
+    if (isSystemInDarkTheme()) {
+        val container = MaterialTheme.colorScheme.primaryContainer
+        return Brush.linearGradient(colors = listOf(container, container))
+    }
+    return Brush.linearGradient(
+        colors = listOf(Color(0xFFE4D9F8), Color(0xFFE8CFF5)),
+    )
+}
 
 fun heroCardBrush(): Brush = Brush.linearGradient(
     colors = listOf(GradientStart, HeroGradientMid, HeroGradientEnd),
