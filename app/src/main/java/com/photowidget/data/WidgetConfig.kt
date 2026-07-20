@@ -17,6 +17,13 @@ enum class WidgetClickAction {
     OPEN_WIDGET_SETTINGS,
 }
 
+enum class FrameStyle {
+    CLASSIC,
+    POLAROID,
+    MINIMAL,
+    VINTAGE,
+}
+
 data class WidgetConfig(
     val widgetNumber: Int = 0,
     val displayName: String? = null,
@@ -26,5 +33,6 @@ data class WidgetConfig(
     val scaleMode: ScaleMode = ScaleMode.COVER,
     val shape: WidgetShape = WidgetShape.ROUNDED_RECT,
     val cornerRadiusDp: Int = 16,
+    val frameStyle: FrameStyle = FrameStyle.POLAROID,
     val clickAction: WidgetClickAction = WidgetClickAction.OPEN_WIDGET_SETTINGS,
 )

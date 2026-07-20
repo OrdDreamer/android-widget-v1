@@ -9,6 +9,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +21,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,8 +34,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.RotateLeft
 import androidx.compose.material.icons.automirrored.filled.RotateRight
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -60,19 +63,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.photowidget.R
+import com.photowidget.data.FrameStyle
 import com.photowidget.data.ImageAlignment
 import com.photowidget.data.ScaleMode
 import com.photowidget.data.WidgetClickAction
 import com.photowidget.data.WidgetConfig
 import com.photowidget.data.WidgetShape
 import com.photowidget.ui.components.AdBannerPlaceholder
+import com.photowidget.ui.components.GradientPrimaryButton
+import com.photowidget.ui.theme.screenBackgroundBrush
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,6 +116,7 @@ fun WidgetSettingsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(screenBackgroundBrush(isSystemInDarkTheme()))
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 16.dp),
@@ -146,6 +156,11 @@ fun WidgetSettingsScreen(
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
+
+            FrameStyleSelector(
+                selected = config.frameStyle,
+                onSelected = { config = config.copy(frameStyle = it) },
+            )
 
             Column {
                 OutlinedTextField(
@@ -292,12 +307,16 @@ fun WidgetSettingsScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = stringResource(R.string.corner_radius),
+                        text = stringResource(R.string.corner_rounding),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
-                        text = "${config.cornerRadiusDp}dp",
+                        text = stringResource(
+                            R.string.corner_rounding_value,
+                            cornerRoundingLabel(config.cornerRadiusDp),
+                            config.cornerRadiusDp,
+                        ),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -352,15 +371,10 @@ fun WidgetSettingsScreen(
 
             AdBannerPlaceholder()
 
-            Button(
+            GradientPrimaryButton(
+                text = saveButtonLabel,
                 onClick = { onSave(config) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(28.dp),
-            ) {
-                Text(saveButtonLabel)
-            }
+            )
 
             if (onCancel != null) {
                 OutlinedButton(
@@ -401,6 +415,103 @@ fun WidgetSettingsScreen(
     } else {
         content(PaddingValues(0.dp))
     }
+}
+
+@Composable
+private fun FrameStyleSelector(
+    selected: FrameStyle,
+    onSelected: (FrameStyle) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            Text(
+                text = stringResource(R.string.frame_style),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                text = stringResource(R.string.frame_style_see_all),
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        }
+        Row(
+            modifier = Modifier.horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            FrameStyle.entries.forEach { style ->
+                val active = selected == style
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.clickable { onSelected(style) },
+                ) {
+                    Box(
+                        modifier = Modifier.size(62.dp),
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .border(
+                                    BorderStroke(
+                                        2.5.dp,
+                                        if (active) {
+                                            MaterialTheme.colorScheme.primary
+                                        } else {
+                                            Color.Transparent
+                                        },
+                                    ),
+                                    RoundedCornerShape(12.dp),
+                                )
+                                .padding(2.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(
+                                    Brush.linearGradient(
+                                        colors = listOf(Color(0xFFD4C4F5), Color(0xFFE0B8F0)),
+                                    ),
+                                ),
+                        )
+                        if (active) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .offset(x = 4.dp, y = (-4).dp)
+                                    .size(17.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.primary),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Check,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(12.dp),
+                                )
+                            }
+                        }
+                    }
+                    Text(
+                        text = frameStyleLabel(style),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 6.dp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun cornerRoundingLabel(dp: Int): String = when {
+    dp <= 8 -> stringResource(R.string.corner_rounding_soft)
+    dp <= 20 -> stringResource(R.string.corner_rounding_medium)
+    else -> stringResource(R.string.corner_rounding_strong)
 }
 
 @Composable
@@ -506,6 +617,7 @@ private fun WidgetPreview(
                 rotationDegrees = config.rotationDegrees,
                 imageAlignment = config.imageAlignment,
                 scaleMode = config.scaleMode,
+                frameStyle = config.frameStyle,
                 modifier = Modifier.fillMaxSize(),
                 retryKey = retryKey,
                 errorContent = {

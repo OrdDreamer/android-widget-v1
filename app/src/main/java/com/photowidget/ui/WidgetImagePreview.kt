@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -17,6 +19,7 @@ import coil.compose.SubcomposeAsyncImageContent
 import coil.decode.BitmapFactoryDecoder
 import coil.decode.ExifOrientationPolicy
 import coil.request.ImageRequest
+import com.photowidget.data.FrameStyle
 import com.photowidget.data.ImageAlignment
 import com.photowidget.data.ScaleMode
 import com.photowidget.widget.ImageOrientationHelper
@@ -28,6 +31,7 @@ fun WidgetImagePreview(
     imageAlignment: ImageAlignment,
     scaleMode: ScaleMode,
     modifier: Modifier = Modifier,
+    frameStyle: FrameStyle = FrameStyle.POLAROID,
     contentScale: ContentScale? = null,
     alignment: Alignment = imageAlignment.toComposeAlignment(),
     retryKey: Int = 0,
@@ -55,6 +59,22 @@ fun WidgetImagePreview(
             .crossfade(false)
             .build()
     }
+    val colorFilter = remember(frameStyle) {
+        if (frameStyle == FrameStyle.VINTAGE) {
+            ColorFilter.colorMatrix(
+                ColorMatrix(
+                    floatArrayOf(
+                        0.9f, 0.2f, 0.05f, 0f, 10f,
+                        0.15f, 0.8f, 0.1f, 0f, 5f,
+                        0.1f, 0.15f, 0.6f, 0f, 0f,
+                        0f, 0f, 0f, 1f, 0f,
+                    ),
+                ),
+            )
+        } else {
+            null
+        }
+    }
 
     SubcomposeAsyncImage(
         model = request,
@@ -64,6 +84,7 @@ fun WidgetImagePreview(
         },
         contentScale = resolvedContentScale,
         alignment = alignment,
+        colorFilter = colorFilter,
     ) {
         val state = painter.state
         when (state) {
@@ -77,7 +98,6 @@ fun WidgetImagePreview(
             }
             is AsyncImagePainter.State.Error -> {
                 if (errorContent != null) {
-                    // Reset rotation so error UI is upright
                     Box(
                         modifier = Modifier
                             .fillMaxSize()

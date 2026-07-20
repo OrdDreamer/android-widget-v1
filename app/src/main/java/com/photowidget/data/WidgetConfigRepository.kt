@@ -112,6 +112,7 @@ class WidgetConfigRepository(private val context: Context) {
             prefs.remove(keyClickAction(keyFor(appWidgetId)))
             prefs.remove(keyRotationDegrees(keyFor(appWidgetId)))
             prefs.remove(keyImageAlignment(keyFor(appWidgetId)))
+            prefs.remove(keyFrameStyle(keyFor(appWidgetId)))
         }
     }
 
@@ -144,6 +145,9 @@ class WidgetConfigRepository(private val context: Context) {
     private fun keyImageAlignment(base: Preferences.Key<String>) =
         stringPreferencesKey("${base.name}_image_alignment")
 
+    private fun keyFrameStyle(base: Preferences.Key<String>) =
+        stringPreferencesKey("${base.name}_frame_style")
+
     private fun Preferences.toWidgetConfig(base: Preferences.Key<String>): WidgetConfig {
         return WidgetConfig(
             widgetNumber = this[keyWidgetNumber(base)] ?: 0,
@@ -160,6 +164,9 @@ class WidgetConfigRepository(private val context: Context) {
                 WidgetShape.entries.firstOrNull { it.name == name }
             } ?: WidgetShape.ROUNDED_RECT,
             cornerRadiusDp = this[keyCornerRadius(base)] ?: 16,
+            frameStyle = this[keyFrameStyle(base)]?.let { name ->
+                FrameStyle.entries.firstOrNull { it.name == name }
+            } ?: FrameStyle.POLAROID,
             clickAction = this[keyClickAction(base)]?.let { name ->
                 WidgetClickAction.entries.firstOrNull { it.name == name }
             } ?: WidgetClickAction.OPEN_WIDGET_SETTINGS,
@@ -187,6 +194,7 @@ class WidgetConfigRepository(private val context: Context) {
         prefs[keyScaleMode(base)] = config.scaleMode.name
         prefs[keyShape(base)] = config.shape.name
         prefs[keyCornerRadius(base)] = config.cornerRadiusDp
+        prefs[keyFrameStyle(base)] = config.frameStyle.name
         prefs[keyClickAction(base)] = config.clickAction.name
     }
 }

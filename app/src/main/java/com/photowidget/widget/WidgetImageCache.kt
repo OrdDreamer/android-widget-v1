@@ -4,12 +4,15 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.net.Uri
 import android.util.Log
+import com.photowidget.data.FrameStyle
 import com.photowidget.data.ImageAlignment
 import com.photowidget.data.ScaleMode
 import com.photowidget.data.WidgetConfig
@@ -111,6 +114,7 @@ object WidgetImageCache {
             totalRotation = totalRotation,
             scaleMode = config.scaleMode,
             alignment = config.imageAlignment,
+            frameStyle = config.frameStyle,
             targetWidth = renderWidthPx,
             targetHeight = renderHeightPx,
             transparentBackground = needsAlpha(config),
@@ -131,6 +135,7 @@ object WidgetImageCache {
         totalRotation: Int,
         scaleMode: ScaleMode,
         alignment: ImageAlignment,
+        frameStyle: FrameStyle,
         targetWidth: Int,
         targetHeight: Int,
         transparentBackground: Boolean,
@@ -160,6 +165,18 @@ object WidgetImageCache {
         val dy = alignment.offsetY(targetHeight.toFloat(), scaledHeight)
 
         val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
+        if (frameStyle == FrameStyle.VINTAGE) {
+            paint.colorFilter = ColorMatrixColorFilter(
+                ColorMatrix(
+                    floatArrayOf(
+                        0.9f, 0.2f, 0.05f, 0f, 10f,
+                        0.15f, 0.8f, 0.1f, 0f, 5f,
+                        0.1f, 0.15f, 0.6f, 0f, 0f,
+                        0f, 0f, 0f, 1f, 0f,
+                    ),
+                ),
+            )
+        }
         val matrix = Matrix().apply {
             postTranslate(-source.width / 2f, -source.height / 2f)
             postRotate(totalRotation.toFloat())

@@ -1,23 +1,28 @@
 package com.photowidget.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -25,14 +30,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.photowidget.R
+import com.photowidget.data.FrameStyle
 import com.photowidget.data.WidgetConfig
 import com.photowidget.data.WidgetShape
 import com.photowidget.ui.components.AdBannerPlaceholder
+import com.photowidget.ui.components.GradientPlusBadge
+import com.photowidget.ui.components.GradientPrimaryButton
+import com.photowidget.ui.theme.brandContainerBrush
+import com.photowidget.ui.theme.brandTitleBrush
+import com.photowidget.ui.theme.heroCardBrush
+import com.photowidget.ui.theme.screenBackgroundBrush
 
 data class WidgetListItem(
     val title: String,
@@ -48,73 +65,129 @@ fun MainScreen(
     onEditWidget: (Int) -> Unit,
     onDeleteWidget: (Int) -> Unit,
     onPinWidget: () -> Unit,
+    onOpenSettings: () -> Unit,
 ) {
+    val dark = isSystemInDarkTheme()
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(screenBackgroundBrush(dark)),
     ) {
         Column(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .padding(bottom = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            MainHeader(onOpenSettings = onOpenSettings)
+
             if (widgetIds.isEmpty()) {
-                EmptyWidgetsState(onPinWidget = onPinWidget)
-            } else {
-                Button(
-                    onClick = onPinWidget,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(26.dp),
-                ) {
-                    Text(stringResource(R.string.pin_widget))
-                }
-
-                Text(
-                    text = stringResource(R.string.active_widgets),
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 4.dp),
+                EmptyWidgetsState(
+                    onPinWidget = onPinWidget,
+                    modifier = Modifier.padding(horizontal = 22.dp),
                 )
-
-                widgetIds.forEach { widgetId ->
-                    val item = widgetItems[widgetId]
-                    WidgetListRow(
-                        item = item,
-                        onEdit = { onEditWidget(widgetId) },
-                        onReset = { onDeleteWidget(widgetId) },
+            } else {
+                Column(
+                    modifier = Modifier.padding(horizontal = 22.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    GradientPrimaryButton(
+                        text = stringResource(R.string.pin_widget),
+                        onClick = onPinWidget,
+                        height = 52.dp,
+                        leading = { GradientPlusBadge() },
                     )
+
+                    Text(
+                        text = stringResource(R.string.active_widgets).uppercase(),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.5.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 6.dp),
+                    )
+
+                    widgetIds.forEach { widgetId ->
+                        WidgetListRow(
+                            item = widgetItems[widgetId],
+                            onEdit = { onEditWidget(widgetId) },
+                            onReset = { onDeleteWidget(widgetId) },
+                        )
+                    }
                 }
             }
         }
 
         AdBannerPlaceholder(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+            modifier = Modifier.padding(horizontal = 22.dp, vertical = 12.dp),
         )
     }
 }
 
 @Composable
-private fun EmptyWidgetsState(onPinWidget: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+private fun MainHeader(onOpenSettings: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 22.dp, end = 22.dp, top = 26.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Top,
     ) {
-        EmptyStateIllustration()
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(R.string.app_name) + " ✨",
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    brush = brandTitleBrush(),
+                    fontWeight = FontWeight.Black,
+                ),
+            )
+            Text(
+                text = stringResource(R.string.app_tagline),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
+        Box(
+            modifier = Modifier
+                .size(44.dp)
+                .shadow(4.dp, RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(16.dp))
+                .background(brandContainerBrush())
+                .clickable(onClick = onOpenSettings),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Settings,
+                contentDescription = stringResource(R.string.app_settings_title),
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmptyWidgetsState(
+    onPinWidget: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
+    ) {
+        EmptyStateHero()
 
         Text(
             text = stringResource(R.string.empty_headline),
             style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Black,
             color = MaterialTheme.colorScheme.onSurface,
         )
 
         Text(
             text = stringResource(R.string.empty_subtitle),
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
@@ -128,38 +201,34 @@ private fun EmptyWidgetsState(onPinWidget: () -> Unit) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
-        Button(
+        GradientPrimaryButton(
+            text = stringResource(R.string.pin_widget),
             onClick = onPinWidget,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(28.dp),
-        ) {
-            Text(stringResource(R.string.pin_widget))
-        }
+            leading = { GradientPlusBadge() },
+        )
     }
 }
 
 @Composable
 private fun EmptyStep(number: Int, text: String) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.Top,
     ) {
         Box(
             modifier = Modifier
                 .size(28.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer),
+                .clip(RoundedCornerShape(9.dp))
+                .background(brandPrimaryBrushLike()),
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = number.toString(),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = Color.White,
             )
         }
         Text(
@@ -172,51 +241,64 @@ private fun EmptyStep(number: Int, text: String) {
 }
 
 @Composable
-private fun EmptyStateIllustration() {
+private fun brandPrimaryBrushLike() = Brush.linearGradient(
+    colors = listOf(Color(0xFF6B9AFF), Color(0xFFC24DFF)),
+)
+
+@Composable
+private fun EmptyStateHero() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
-            .clip(RoundedCornerShape(20.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant),
+            .height(230.dp)
+            .shadow(16.dp, RoundedCornerShape(28.dp), clip = false)
+            .clip(RoundedCornerShape(28.dp))
+            .background(heroCardBrush()),
     ) {
         Box(
             modifier = Modifier
-                .padding(start = 24.dp, top = 28.dp)
-                .size(width = 180.dp, height = 150.dp)
-                .clip(RoundedCornerShape(48))
-                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f)),
-        )
-        Text(
-            text = stringResource(R.string.empty_illustration_wallpaper),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 24.dp, top = 184.dp),
-        )
-        Text(
-            text = stringResource(R.string.empty_illustration_widget),
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 28.dp, bottom = 136.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.secondaryContainer)
-                .padding(horizontal = 8.dp, vertical = 3.dp),
+                .fillMaxSize()
+                .background(
+                    Brush.radialGradient(
+                        colors = listOf(Color.White.copy(alpha = 0.25f), Color.Transparent),
+                        radius = 500f,
+                    ),
+                ),
         )
         Box(
             modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 28.dp, bottom = 28.dp)
-                .size(104.dp)
-                .shadow(6.dp, RoundedCornerShape(20.dp))
-                .clip(RoundedCornerShape(20.dp))
+                .align(Alignment.Center)
+                .rotate(-7f)
+                .size(width = 151.dp, height = 139.dp)
+                .shadow(16.dp, RoundedCornerShape(14.dp))
+                .clip(RoundedCornerShape(14.dp))
                 .background(MaterialTheme.colorScheme.surface)
-                .padding(3.dp)
-                .clip(RoundedCornerShape(17.dp))
-                .background(MaterialTheme.colorScheme.primaryContainer),
-        )
+                .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 26.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0xFF4A3A7A),
+                                Color(0xFF9B4DFF),
+                                Color(0xFFFFB86B),
+                            ),
+                        ),
+                    ),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .offset(x = 20.dp, y = 28.dp)
+                        .size(38.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFF7D98A)),
+                )
+            }
+        }
     }
 }
 
@@ -227,23 +309,16 @@ private fun WidgetListRow(
     onReset: () -> Unit,
 ) {
     val config = item?.config
-    val shapeLabel = when (config?.shape) {
-        WidgetShape.RECTANGLE, null -> stringResource(R.string.shape_rectangle)
-        WidgetShape.ROUNDED_RECT -> stringResource(R.string.shape_rounded)
-        WidgetShape.CIRCLE -> stringResource(R.string.shape_circle)
-    }
-    val meta = buildString {
-        append(item?.sizeLabel ?: "1x1")
-        append(" · ")
-        append(shapeLabel)
-    }
+    val styleLabel = frameStyleLabel(config?.frameStyle ?: FrameStyle.POLAROID)
+    val meta = "${item?.sizeLabel ?: "1×1"} · $styleLabel"
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(10.dp),
+            .shadow(6.dp, RoundedCornerShape(18.dp), clip = false)
+            .clip(RoundedCornerShape(18.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
@@ -252,8 +327,10 @@ private fun WidgetListRow(
             Text(
                 text = item?.title ?: stringResource(R.string.widget_number, 0),
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = meta,
@@ -261,15 +338,19 @@ private fun WidgetListRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        FilledTonalButton(
-            onClick = onEdit,
-            modifier = Modifier.height(36.dp),
-            shape = RoundedCornerShape(18.dp),
-            contentPadding = PaddingValues(horizontal = 12.dp),
+        Box(
+            modifier = Modifier
+                .size(36.dp)
+                .clip(RoundedCornerShape(18.dp))
+                .background(brandContainerBrush())
+                .clickable(onClick = onEdit),
+            contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = stringResource(R.string.edit_widget),
-                style = MaterialTheme.typography.labelLarge,
+            Icon(
+                imageVector = Icons.Outlined.Edit,
+                contentDescription = stringResource(R.string.edit_widget),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.size(18.dp),
             )
         }
         OutlinedButton(
@@ -287,6 +368,14 @@ private fun WidgetListRow(
 }
 
 @Composable
+fun frameStyleLabel(style: FrameStyle): String = when (style) {
+    FrameStyle.CLASSIC -> stringResource(R.string.frame_classic)
+    FrameStyle.POLAROID -> stringResource(R.string.frame_polaroid)
+    FrameStyle.MINIMAL -> stringResource(R.string.frame_minimal)
+    FrameStyle.VINTAGE -> stringResource(R.string.frame_vintage)
+}
+
+@Composable
 fun WidgetListThumbnail(config: WidgetConfig?) {
     val shape = when (config?.shape) {
         WidgetShape.RECTANGLE, null -> RoundedCornerShape(4.dp)
@@ -296,7 +385,7 @@ fun WidgetListThumbnail(config: WidgetConfig?) {
 
     Box(
         modifier = Modifier
-            .size(52.dp)
+            .size(54.dp)
             .clip(shape)
             .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center,
@@ -307,6 +396,7 @@ fun WidgetListThumbnail(config: WidgetConfig?) {
                 rotationDegrees = config.rotationDegrees,
                 imageAlignment = config.imageAlignment,
                 scaleMode = config.scaleMode,
+                frameStyle = config.frameStyle,
                 modifier = Modifier.fillMaxSize(),
             )
         } else {
