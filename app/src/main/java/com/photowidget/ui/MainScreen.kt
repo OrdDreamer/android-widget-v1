@@ -1,18 +1,19 @@
 package com.photowidget.ui
 
+import androidx.compose.foundation.Image as ComposeImage
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -21,19 +22,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,12 +47,14 @@ import com.photowidget.data.WidgetShape
 import com.photowidget.ui.components.AdBannerPlaceholder
 import com.photowidget.ui.components.GradientPlusBadge
 import com.photowidget.ui.components.GradientPrimaryButton
-import com.photowidget.ui.theme.brandContainerBrush
-import com.photowidget.ui.theme.brandTitleBrush
-import com.photowidget.ui.theme.heroCardBrush
-import com.photowidget.ui.theme.screenBackgroundBrush
 import com.photowidget.ui.photoWidgetNavigationBarPadding
 import com.photowidget.ui.photoWidgetSafeAreaPadding
+import com.photowidget.ui.theme.brandIconTint
+import com.photowidget.ui.theme.brandTitleBrush
+import com.photowidget.ui.theme.iconBoxBrush
+import com.photowidget.ui.theme.listThumbnailPlaceholderBorderColor
+import com.photowidget.ui.theme.screenBackgroundBrush
+import com.photowidget.ui.theme.stepBadgeBrush
 
 data class WidgetListItem(
     val title: String,
@@ -98,7 +101,7 @@ fun MainScreen(
                     GradientPrimaryButton(
                         text = stringResource(R.string.pin_widget),
                         onClick = onPinWidget,
-                        height = 52.dp,
+                        height = 54.dp,
                         leading = { GradientPlusBadge() },
                     )
 
@@ -108,7 +111,7 @@ fun MainScreen(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 0.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 6.dp),
+                        modifier = Modifier.padding(top = 8.dp),
                     )
 
                     widgetIds.forEach { widgetId ->
@@ -159,14 +162,14 @@ private fun MainHeader(onOpenSettings: () -> Unit) {
                 .size(44.dp)
                 .shadow(4.dp, RoundedCornerShape(16.dp))
                 .clip(RoundedCornerShape(16.dp))
-                .background(brandContainerBrush())
+                .background(iconBoxBrush())
                 .clickable(onClick = onOpenSettings),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = Icons.Outlined.Settings,
                 contentDescription = stringResource(R.string.app_settings_title),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                tint = brandIconTint(),
             )
         }
     }
@@ -211,6 +214,7 @@ private fun EmptyWidgetsState(
         GradientPrimaryButton(
             text = stringResource(R.string.pin_widget),
             onClick = onPinWidget,
+            height = 58.dp,
             leading = { GradientPlusBadge() },
         )
     }
@@ -226,7 +230,7 @@ private fun EmptyStep(number: Int, text: String) {
             modifier = Modifier
                 .size(28.dp)
                 .clip(RoundedCornerShape(9.dp))
-                .background(brandPrimaryBrushLike()),
+                .background(stepBadgeBrush()),
             contentAlignment = Alignment.Center,
         ) {
             Text(
@@ -245,66 +249,29 @@ private fun EmptyStep(number: Int, text: String) {
     }
 }
 
-@Composable
-private fun brandPrimaryBrushLike() = Brush.linearGradient(
-    colors = listOf(Color(0xFF6B9AFF), Color(0xFFC24DFF)),
-)
-
+/**
+ * Empty-state hero illustration. This is a raster asset (`empty_state_hero.png` /
+ * `drawable-night-nodpi/empty_state_hero.png`), not a native re-creation: it bakes the card,
+ * the tilted polaroid, and the dusk-skyline illustration into one image at the mock's exact
+ * proportions (368x230 card, 151x139 polaroid, generated from the same verified CSS geometry
+ * used previously), so the polaroid-to-card ratio can't drift on devices narrower or wider than
+ * the mock's 412dp frame the way it did when the card and the polaroid were sized independently
+ * in Compose.
+ */
 @Composable
 private fun EmptyStateHero() {
-    Box(
+    ComposeImage(
+        painter = painterResource(R.drawable.empty_state_hero),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
         modifier = Modifier
             .fillMaxWidth()
-            .height(230.dp)
-            .shadow(16.dp, RoundedCornerShape(28.dp), clip = false)
-            .clip(RoundedCornerShape(28.dp))
-            .background(heroCardBrush()),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.radialGradient(
-                        colors = listOf(Color.White.copy(alpha = 0.25f), Color.Transparent),
-                        radius = 500f,
-                    ),
-                ),
-        )
-        Box(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .rotate(-7f)
-                .size(width = 151.dp, height = 139.dp)
-                .shadow(16.dp, RoundedCornerShape(14.dp))
-                .clip(RoundedCornerShape(14.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 26.dp),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color(0xFF4A3A7A),
-                                Color(0xFF9B4DFF),
-                                Color(0xFFFFB86B),
-                            ),
-                        ),
-                    ),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .offset(x = 20.dp, y = 28.dp)
-                        .size(38.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFF7D98A)),
-                )
-            }
-        }
-    }
+            // Mock's hero card is 368x230 (412dp mock frame minus 22dp margins) — an
+            // aspect ratio, not a fixed height, so the polaroid-to-card proportion the raster
+            // was rendered at survives regardless of the actual device width.
+            .aspectRatio(368f / 230f)
+            .clip(RoundedCornerShape(28.dp)),
+    )
 }
 
 @Composable
@@ -320,19 +287,22 @@ private fun WidgetListRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(6.dp, RoundedCornerShape(18.dp), clip = false)
-            .clip(RoundedCornerShape(18.dp))
+            .shadow(4.dp, RoundedCornerShape(24.dp), clip = false)
+            .clip(RoundedCornerShape(24.dp))
             .background(MaterialTheme.colorScheme.surface)
-            .padding(12.dp),
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         WidgetListThumbnail(config = config)
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
             Text(
                 text = item?.title ?: stringResource(R.string.widget_number, 0),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -343,31 +313,45 @@ private fun WidgetListRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        Box(
-            modifier = Modifier
-                .size(36.dp)
-                .clip(RoundedCornerShape(18.dp))
-                .background(brandContainerBrush())
-                .clickable(onClick = onEdit),
-            contentAlignment = Alignment.Center,
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Edit,
-                contentDescription = stringResource(R.string.edit_widget),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.size(18.dp),
-            )
-        }
-        OutlinedButton(
-            onClick = onReset,
-            modifier = Modifier.height(36.dp),
-            shape = RoundedCornerShape(18.dp),
-            contentPadding = PaddingValues(horizontal = 12.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.delete_widget_short),
-                style = MaterialTheme.typography.labelLarge,
-            )
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(iconBoxBrush())
+                    .clickable(onClick = onEdit),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Edit,
+                    contentDescription = stringResource(R.string.edit_widget),
+                    tint = brandIconTint(),
+                    modifier = Modifier.size(18.dp),
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .height(36.dp)
+                    .clip(RoundedCornerShape(18.dp))
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outline,
+                        shape = RoundedCornerShape(18.dp),
+                    )
+                    .clickable(onClick = onReset)
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = stringResource(R.string.delete_widget_short),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
@@ -383,19 +367,32 @@ fun frameStyleLabel(style: FrameStyle): String = when (style) {
 @Composable
 fun WidgetListThumbnail(config: WidgetConfig?) {
     val shape = when (config?.shape) {
-        WidgetShape.RECTANGLE, null -> RoundedCornerShape(4.dp)
-        WidgetShape.ROUNDED_RECT -> RoundedCornerShape((config.cornerRadiusDp / 2).coerceAtLeast(4).dp)
+        WidgetShape.RECTANGLE, null -> RoundedCornerShape(10.dp)
+        WidgetShape.ROUNDED_RECT -> RoundedCornerShape((config.cornerRadiusDp / 2).coerceAtLeast(10).dp)
         WidgetShape.CIRCLE -> CircleShape
     }
+    val hasImage = config?.imageUri != null
 
     Box(
         modifier = Modifier
-            .size(54.dp)
+            .size(52.dp)
             .clip(shape)
-            .background(MaterialTheme.colorScheme.surfaceVariant),
+            .then(
+                if (hasImage) {
+                    Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
+                } else {
+                    Modifier
+                        .background(iconBoxBrush())
+                        .dashedBorder(
+                            width = 2.dp,
+                            color = listThumbnailPlaceholderBorderColor(),
+                            shape = shape,
+                        )
+                },
+            ),
         contentAlignment = Alignment.Center,
     ) {
-        if (config?.imageUri != null) {
+        if (hasImage) {
             WidgetImagePreview(
                 imageUri = config.imageUri,
                 rotationDegrees = config.rotationDegrees,
@@ -405,10 +402,11 @@ fun WidgetListThumbnail(config: WidgetConfig?) {
                 modifier = Modifier.fillMaxSize(),
             )
         } else {
-            Text(
-                text = "#${config?.widgetNumber ?: "?"}",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            Icon(
+                imageVector = Icons.Outlined.Image,
+                contentDescription = null,
+                tint = brandIconTint(),
+                modifier = Modifier.size(24.dp),
             )
         }
     }

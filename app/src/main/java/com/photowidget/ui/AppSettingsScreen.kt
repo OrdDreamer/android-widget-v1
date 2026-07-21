@@ -1,122 +1,145 @@
 package com.photowidget.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.photowidget.R
 import com.photowidget.ui.theme.screenBackgroundBrush
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Mirrors the mock's "2c. App settings" screen exactly: a plain 68dp header (circular back
+ * button, no app bar chrome) and single-row cards at 16dp corner radius / 16x14dp padding —
+ * distinct from Material's default [androidx.compose.material3.TopAppBar] and from the 22dp
+ * [com.photowidget.ui.components.SettingsCard] used for the grouped Widget-settings card.
+ */
 @Composable
 fun AppSettingsScreen(
     onBack: () -> Unit,
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.app_settings_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.navigate_back),
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
+    val dark = isSystemInDarkTheme()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(screenBackgroundBrush(dark))
+            .photoWidgetSafeAreaPadding(),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(68.dp)
+                .padding(horizontal = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .clickable(onClick = onBack),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.navigate_back),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(26.dp),
+                )
+            }
+            Text(
+                text = stringResource(R.string.app_settings_title),
+                fontSize = 21.sp,
+                fontWeight = FontWeight.Black,
+                color = MaterialTheme.colorScheme.onSurface,
             )
-        },
-    ) { padding ->
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(screenBackgroundBrush(isSystemInDarkTheme()))
-                .padding(padding)
-                .padding(vertical = 8.dp),
+                .padding(horizontal = 14.dp, vertical = 8.dp)
+                .photoWidgetNavigationBarPadding(),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            SettingsRow(
+            AppSettingsRow(
                 title = stringResource(R.string.settings_language),
                 subtitle = stringResource(R.string.settings_language_system_default),
-                enabled = true,
                 onClick = { /* I18N wired in a follow-up */ },
             )
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
-                color = MaterialTheme.colorScheme.outlineVariant,
-            )
-            SettingsRow(
+            AppSettingsRow(
                 title = stringResource(R.string.settings_about),
                 subtitle = null,
                 enabled = false,
-                onClick = {},
             )
         }
     }
 }
 
 @Composable
-private fun SettingsRow(
+private fun AppSettingsRow(
     title: String,
     subtitle: String?,
-    enabled: Boolean,
-    onClick: () -> Unit,
+    enabled: Boolean = true,
+    onClick: (() -> Unit)? = null,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .then(if (enabled) Modifier.clickable(onClick = onClick) else Modifier)
-            .alpha(if (enabled) 1f else 0.4f)
-            .padding(horizontal = 20.dp, vertical = 14.dp),
+            .alpha(if (enabled) 1f else 0.45f)
+            .shadow(4.dp, RoundedCornerShape(16.dp), clip = false)
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+            .padding(horizontal = 14.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             if (subtitle != null) {
-                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 2.dp),
                 )
             }
         }
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(20.dp),
         )
     }
 }

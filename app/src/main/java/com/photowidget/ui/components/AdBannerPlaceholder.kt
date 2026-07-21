@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.photowidget.R
+import com.photowidget.ui.theme.adBannerBackgroundColor
 
 /** Visual ad slot only — no SDK. */
 @Composable
@@ -20,9 +21,9 @@ fun AdBannerPlaceholder(modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(64.dp),
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+            .height(58.dp),
+        shape = RoundedCornerShape(14.dp),
+        color = adBannerBackgroundColor(),
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(

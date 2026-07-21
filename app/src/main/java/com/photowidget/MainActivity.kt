@@ -13,7 +13,10 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.DisposableEffect
@@ -26,6 +29,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.photowidget.data.WidgetConfig
 import com.photowidget.ui.AppSettingsScreen
 import com.photowidget.ui.MainScreen
@@ -155,8 +160,20 @@ class MainActivity : ComponentActivity() {
                 if (deletingWidgetId != -1) {
                     AlertDialog(
                         onDismissRequest = { deletingWidgetId = -1 },
-                        title = { Text(stringResource(R.string.delete_widget_title)) },
-                        text = { Text(stringResource(R.string.delete_widget_message)) },
+                        shape = RoundedCornerShape(24.dp),
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        title = {
+                            Text(
+                                text = stringResource(R.string.delete_widget_title),
+                                fontWeight = FontWeight.Black,
+                            )
+                        },
+                        text = {
+                            Text(
+                                text = stringResource(R.string.delete_widget_message),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        },
                         confirmButton = {
                             TextButton(
                                 onClick = {
@@ -177,12 +194,23 @@ class MainActivity : ComponentActivity() {
                                         ).show()
                                     }
                                 },
+                                colors = ButtonDefaults.textButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.primary,
+                                ),
                             ) {
-                                Text(stringResource(R.string.delete_widget_confirm))
+                                Text(
+                                    text = stringResource(R.string.delete_widget_confirm),
+                                    fontWeight = FontWeight.Bold,
+                                )
                             }
                         },
                         dismissButton = {
-                            TextButton(onClick = { deletingWidgetId = -1 }) {
+                            TextButton(
+                                onClick = { deletingWidgetId = -1 },
+                                colors = ButtonDefaults.textButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                ),
+                            ) {
                                 Text(stringResource(R.string.cancel))
                             }
                         },
