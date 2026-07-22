@@ -21,7 +21,8 @@
 | **UI акцент v1** | closed | **Emotion-first** (stylist — на скрінах/контролях, не brand character) |
 | **Brand direction (working)** | closed | **Warm calm** — теплий, не social, не Widgetsmith clone |
 | **Onboarding** | closed | Без окремих onboarding-екранів; empty головного + опційний Launch screen |
-| **Ads layout in-app** | closed | Banner: головний + settings; **interstitial після Save**; не у віджеті |
+| **Ads layout in-app** | closed | **Ad banner pinned bottom** у єдиному App Shell на всіх продуктових екранах; **interstitial після Save**; не у віджеті |
+| **App Shell (layout)** | closed | Єдиний каркас: header (back? / title / action?) + content + optional sticky CTA над банером + banner внизу. Винятки: Launch, dialogs. Канон — [UI_CAPABILITIES](../../docs/UI_CAPABILITIES.md) |
 | **Settings IA** | closed | Widget settings: single scroll, прев’ю зверху; **без** slider zoom (лише Cover/Contain) |
 | **Theme v1** | closed | **Light + Dark** (system); Dynamic Color — optional пізніше; visual: **warm calm** |
 | **Privacy в UI v1** | closed | **Не акцентувати**; пункт/лінк у App settings; Store listing |
