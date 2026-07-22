@@ -18,20 +18,16 @@
 | **Store listing (Play Console)** | closed | **EN primary** на старті; **UA по можливості**; інші мови сторінки — пізніше |
 | **Локалізація UI додатку** | closed (ціль) | **Максимум мов у застосунку** (окремо від Store listing); пріоритет реалізації — на етапі розробки перед/під реліз |
 | **Proxy-метрики успіху** | closed | Див. [kpi-metrics.md](kpi-metrics.md) |
-| **UI акцент v1** | closed | **Emotion-first** (stylist — на скрінах/контролях, не brand character) → [design-brief.md](design-brief.md) |
+| **UI акцент v1** | closed | **Emotion-first** (stylist — на скрінах/контролях, не brand character) |
 | **Brand direction (working)** | closed | **Warm calm** — теплий, не social, не Widgetsmith clone |
-| **Onboarding** | closed | Лише **розширений empty state**, без окремих екранів |
+| **Onboarding** | closed | Без окремих onboarding-екранів; empty головного + опційний Launch screen |
 | **Ads layout in-app** | closed | Banner: головний + settings; **interstitial після Save**; не у віджеті |
-| **Settings IA** | closed | Single scroll, прев’ю зверху |
-| **Theme v1** | closed | **Light + Dark** (system); Dynamic Color — optional пізніше |
-| **Privacy в UI v1** | closed | **Не акцентувати**; Store listing; info block — optional low priority |
-| **Головний екран** | closed | Як зараз за змістом + **polished empty state** |
-| **Design brief** | closed | [design-brief.md](design-brief.md) |
-| **Primary color (working)** | closed | Soft teal-green ~`#3F6F66`; warm neutrals; не purple / coral / amber |
-| **Empty-state illustration** | closed | Soft blob/organic + photo placeholder (wallpaper + widget) |
-| **Typeface** | closed | Roboto (Material default) |
-| **Default shape in mockups** | closed | Rounded rectangle (circle/rect лишаються в settings) |
-| **App settings / Language** | closed | Gear у TopAppBar → App settings → Language; розділ на майбутнє (About/Privacy); не orphan switcher на головному |
+| **Settings IA** | closed | Widget settings: single scroll, прев’ю зверху; **без** slider zoom (лише Cover/Contain) |
+| **Theme v1** | closed | **Light + Dark** (system); Dynamic Color — optional пізніше; visual: **warm calm** |
+| **Privacy в UI v1** | closed | **Не акцентувати**; пункт/лінк у App settings; Store listing |
+| **Канон екранів (дизайн)** | closed | 1 Launch · 2 Home empty/list (sticky Add) · 3 App settings · 4 Reset dialog · 5 About · 6 Widget settings — [UI_CAPABILITIES](../../docs/UI_CAPABILITIES.md) |
+| **App settings / Language** | closed | Gear → App settings → Language; About (окремий екран); Privacy; не orphan switcher на головному |
+| **Design brief / mockups** | superseded | Видалено; канон екранів — [UI_CAPABILITIES](../../docs/UI_CAPABILITIES.md) |
 
 ## Відкрито
 
