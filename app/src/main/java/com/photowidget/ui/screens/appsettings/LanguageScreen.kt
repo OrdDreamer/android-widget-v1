@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.photowidget.R
 import com.photowidget.ui.components.core.CardPadding
@@ -17,6 +18,7 @@ import com.photowidget.ui.components.core.CardVariant
 import com.photowidget.ui.components.core.PhotoWidgetCard
 import com.photowidget.ui.photoWidgetSafeAreaPadding
 import com.photowidget.ui.screens.common.ScreenHeader
+import com.photowidget.ui.theme.PhotoWidgetTheme
 
 /**
  * Reached from App Settings → Language. No locale switching exists yet (the app is
@@ -41,5 +43,13 @@ fun LanguageScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
                 )
             }
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun LanguageScreenPreview() {
+    PhotoWidgetTheme {
+        LanguageScreen(onBack = {})
     }
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.photowidget.R
 import com.photowidget.ui.components.core.AdBanner
@@ -29,6 +30,7 @@ import com.photowidget.ui.components.core.ButtonVariant
 import com.photowidget.ui.components.core.PhotoWidgetButton
 import com.photowidget.ui.theme.Cream50
 import com.photowidget.ui.theme.PhotoWidgetElevation
+import com.photowidget.ui.theme.PhotoWidgetTheme
 import com.photowidget.ui.theme.Sage300
 import com.photowidget.ui.theme.Terracotta300
 import com.photowidget.ui.theme.photoWidgetShadow
@@ -146,5 +148,13 @@ private fun HeroIllustration(modifier: Modifier = Modifier) {
                     .background(Brush.linearGradient(listOf(Terracotta300, Sage300)), RoundedCornerShape(3.dp)),
             )
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun HomeEmptyScreenPreview() {
+    PhotoWidgetTheme {
+        HomeEmptyScreen(onPinWidget = {}, onOpenSettings = {})
     }
 }

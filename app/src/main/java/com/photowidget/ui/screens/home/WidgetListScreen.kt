@@ -5,15 +5,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,8 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.photowidget.R
+import com.photowidget.data.WidgetConfig
 import com.photowidget.data.WidgetShape
 import com.photowidget.ui.WidgetImagePreview
 import com.photowidget.ui.components.core.AdBanner
@@ -42,6 +40,7 @@ import com.photowidget.ui.components.core.PhotoWidgetButton
 import com.photowidget.ui.components.core.PhotoWidgetCard
 import com.photowidget.ui.photoWidgetNavigationBarPadding
 import com.photowidget.ui.photoWidgetSafeAreaPadding
+import com.photowidget.ui.theme.PhotoWidgetTheme
 
 /** "Home Screen - Widget List.dc.html". */
 @Composable
@@ -94,8 +93,8 @@ fun WidgetListScreen(
 @Composable
 private fun WidgetRow(item: WidgetListItem?, onEdit: () -> Unit, onReset: () -> Unit) {
     PhotoWidgetCard(variant = CardVariant.Default, padding = CardPadding.Small, modifier = Modifier.fillMaxWidth()) {
-        Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
-            WidgetThumbnail(item = item, modifier = Modifier.fillMaxHeight())
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            WidgetThumbnail(item = item)
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -141,7 +140,7 @@ private fun WidgetThumbnail(item: WidgetListItem?, modifier: Modifier = Modifier
     }
     Box(
         modifier = modifier
-            .width(108.dp)
+            .size(108.dp)
             .clip(shape)
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
             .background(MaterialTheme.colorScheme.surfaceVariant),
@@ -164,5 +163,24 @@ private fun WidgetThumbnail(item: WidgetListItem?, modifier: Modifier = Modifier
                 modifier = Modifier.size(28.dp),
             )
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun WidgetListScreenPreview() {
+    val items = mapOf(
+        1 to WidgetListItem(title = "Мама", sizeLabel = "3×3", config = WidgetConfig(widgetNumber = 1)),
+        2 to WidgetListItem(title = "Віджет #2", sizeLabel = "2×2", config = WidgetConfig(widgetNumber = 2, imageUri = null)),
+    )
+    PhotoWidgetTheme {
+        WidgetListScreen(
+            widgetIds = items.keys.toIntArray(),
+            widgetItems = items,
+            onEditWidget = {},
+            onResetWidget = {},
+            onPinWidget = {},
+            onOpenSettings = {},
+        )
     }
 }

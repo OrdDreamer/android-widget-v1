@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.photowidget.R
 import com.photowidget.ui.components.core.ButtonSize
@@ -33,6 +34,7 @@ import com.photowidget.ui.components.core.PhotoWidgetCard
 import com.photowidget.ui.photoWidgetSafeAreaPadding
 import com.photowidget.ui.screens.common.ScreenHeader
 import com.photowidget.ui.theme.Lora
+import com.photowidget.ui.theme.PhotoWidgetTheme
 
 /** "About.dc.html". */
 @Composable
@@ -120,6 +122,14 @@ fun AboutScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
                 modifier = Modifier.padding(top = 24.dp),
             )
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun AboutScreenPreview() {
+    PhotoWidgetTheme {
+        AboutScreen(onBack = {})
     }
 }
 

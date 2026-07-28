@@ -68,6 +68,8 @@ import com.photowidget.ui.components.media.PhotoWidgetPhotoPreview
 import com.photowidget.ui.photoWidgetNavigationBarPadding
 import com.photowidget.ui.photoWidgetSafeAreaPadding
 import com.photowidget.ui.theme.Lora
+import com.photowidget.ui.theme.PhotoWidgetTheme
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 
 /** "Widget Settings.dc.html". Photo-picker logic preserved verbatim from the pre-rebuild screen. */
 @Composable
@@ -289,6 +291,14 @@ fun WidgetSettingsScreen(
 
             AdBanner(modifier = Modifier.padding(top = 4.dp, bottom = 4.dp))
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun WidgetSettingsScreenPreview() {
+    PhotoWidgetTheme {
+        WidgetSettingsScreen(initialConfig = WidgetConfig(widgetNumber = 1), onSave = {}, onCancel = {})
     }
 }
 

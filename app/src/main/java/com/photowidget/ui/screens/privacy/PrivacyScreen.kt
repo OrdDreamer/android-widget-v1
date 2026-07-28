@@ -12,10 +12,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.photowidget.R
 import com.photowidget.ui.photoWidgetSafeAreaPadding
 import com.photowidget.ui.screens.common.ScreenHeader
+import com.photowidget.ui.theme.PhotoWidgetTheme
 
 /**
  * Reached from App Settings → Privacy. No source design mock or real policy URL exists yet — a
@@ -44,5 +46,13 @@ fun PrivacyScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun PrivacyScreenPreview() {
+    PhotoWidgetTheme {
+        PrivacyScreen(onBack = {})
     }
 }

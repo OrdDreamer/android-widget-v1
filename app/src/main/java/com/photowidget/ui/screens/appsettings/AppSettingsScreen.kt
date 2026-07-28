@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.photowidget.R
 import com.photowidget.ui.components.core.AdBanner
@@ -32,6 +33,7 @@ import com.photowidget.ui.components.core.PhotoWidgetCard
 import com.photowidget.ui.photoWidgetNavigationBarPadding
 import com.photowidget.ui.photoWidgetSafeAreaPadding
 import com.photowidget.ui.screens.common.ScreenHeader
+import com.photowidget.ui.theme.PhotoWidgetTheme
 
 /** "App Settings.dc.html". */
 @Composable
@@ -61,6 +63,14 @@ fun AppSettingsScreen(
         }
 
         AdBanner(modifier = Modifier.photoWidgetNavigationBarPadding())
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun AppSettingsScreenPreview() {
+    PhotoWidgetTheme {
+        AppSettingsScreen(onBack = {}, onNavigateLanguage = {}, onNavigateAbout = {}, onNavigatePrivacy = {})
     }
 }
 
