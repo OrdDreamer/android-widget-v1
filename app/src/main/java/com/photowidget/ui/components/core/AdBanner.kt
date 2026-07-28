@@ -16,6 +16,8 @@ import com.photowidget.R
 /**
  * Plain footer placeholder shared by every screen mock's bottom bar. Not part of the 27-component
  * design-system library (no dedicated `.jsx` exists for it) — kept as a one-off internal composable.
+ * Full-width, 64dp tall per "Home Screen - Widget List.dc.html"'s `bannerBase` — swap the Text for
+ * the real ad SDK view without touching this footprint when a real banner is wired up.
  */
 @Composable
 fun AdBanner(modifier: Modifier = Modifier) {

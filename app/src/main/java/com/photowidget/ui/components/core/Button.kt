@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -72,7 +73,7 @@ fun PhotoWidgetButton(
         ButtonSize.Small -> MaterialTheme.typography.bodySmall
         ButtonSize.Medium -> MaterialTheme.typography.bodyMedium
         ButtonSize.Large -> MaterialTheme.typography.bodyLarge
-    }
+    }.copy(fontWeight = FontWeight.SemiBold)
 
     val content: @Composable () -> Unit = {
         Row(
