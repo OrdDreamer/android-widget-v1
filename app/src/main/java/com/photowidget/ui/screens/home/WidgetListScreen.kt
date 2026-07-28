@@ -106,7 +106,7 @@ private fun WidgetRow(item: WidgetListItem?, onEdit: () -> Unit, onReset: () -> 
             ) {
                 Text(
                     text = item?.title ?: stringResource(R.string.widget_number, 0),
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -119,12 +119,12 @@ private fun WidgetRow(item: WidgetListItem?, onEdit: () -> Unit, onReset: () -> 
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 2.dp),
+                    modifier = Modifier.padding(top = 8.dp),
                 )
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = 12.dp),
                 ) {
                     PhotoWidgetButton(text = stringResource(R.string.edit_widget), onClick = onEdit, variant = ButtonVariant.Primary, size = ButtonSize.Small)
                     PhotoWidgetButton(text = stringResource(R.string.delete_widget_short), onClick = onReset, variant = ButtonVariant.Secondary, size = ButtonSize.Small)

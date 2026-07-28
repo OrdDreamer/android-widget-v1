@@ -36,7 +36,7 @@
     <string name="active_widgets">Активні віджети</string>
     <string name="widget_number">Віджет #%1$d</string>
     <string name="widget_placeholder_with_number">%1$s\n%2$s</string>
-    <string name="edit_widget">Редагувати</string>
+    <string name="edit_widget">Edit</string>
     <string name="no_photo_selected">Фото не обрано</string>
     <string name="no_widgets">Немає віджетів на робочому столі</string>
     <string name="pin_not_supported">Ваш лаунчер не підтримує закріплення віджета</string>
@@ -51,7 +51,7 @@
     <string name="display_name_counter">%1$d/40</string>
     <string name="widget_info_label">Інфо</string>
     <string name="widget_system_rounding_note">Launcher може додатково округляти зовнішні кути віджета</string>
-    <string name="delete_widget_short">Скинути</string>
+    <string name="delete_widget_short">Reset</string>
     <string name="delete_widget_title">Скинути віджет?</string>
     <string name="delete_widget_message">Фото й налаштування буде скинуто. Віджет лишиться на робочому столі.</string>
     <string name="delete_widget_confirm">Підтвердити</string>
