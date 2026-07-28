@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/styles.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0..200">
+  <script src="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/_ds_bundle.js"></script>
+  <style>
+    body{margin:0;background:var(--pw-cream-200);font-family:var(--font-body);}
+    a{color:var(--accent-primary)}a:hover{color:var(--accent-primary-hover)}
+  </style>
+</helmet>
+<div style="display:flex;align-items:flex-start;justify-content:center;padding:64px 40px;">
+  <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="{{ isDark }}" hint-size="412px,892px">
+    <div style="{{ shellStyle }}">
+      <div style="{{ headerStyle }}">
+        <button type="button" aria-label="Назад" style="{{ backBtnStyle }}" style-hover="background: color-mix(in srgb, currentColor 12%, transparent);" style-active="transform: scale(0.94);"><span class="material-symbols-rounded" style="font-size:22px">arrow_back</span></button>
+        <div style="{{ titleStyle }}">Налаштування віджета</div>
+        <div style="{{ headerSpacerStyle }}"></div>
+      </div>
+
+      <div style="{{ contentStyle }}">
+
+        <div style="{{ previewWrapStyle }}">
+          <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.PhotoPreview" state="{{ photoState }}" size="{{ 240 }}" on-select="{{ noop }}" hint-size="240px,240px"></x-import>
+        </div>
+        <div style="{{ ctaRowCenterStyle }}">
+          <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Button" variant="secondary" size="md" icon="add_photo_alternate" hint-size="auto,44px">{{ photoBtnLabel }}</x-import>
+        </div>
+
+        <div style="{{ sectionStyle }}">
+          <div style="{{ sectionLabelStyle }}">Вирівнювання</div>
+          <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Card" variant="default" padding="md" dc-props="{{ cardProps }}" hint-size="100%,140px">
+            <div style="{{ alignRowStyle }}">
+              <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.AlignmentPad" value="{{ alignment }}" on-change="{{ setAlignment }}" hint-size="116px,116px"></x-import>
+            </div>
+          </x-import>
+        </div>
+
+        <div style="{{ sectionStyle }}">
+          <div style="{{ sectionLabelStyle }}">Обертання</div>
+          <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Card" variant="default" padding="md" dc-props="{{ cardProps }}" hint-size="100%,96px">
+            <div style="{{ rotationRowStyle }}">
+              <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.IconButton" icon="rotate_left" variant="filled" size="md" label="Повернути на -90°" on-click="{{ rotateLeft }}" hint-size="40px,40px"></x-import>
+              <div style="{{ rotationValueStyle }}">{{ rotationLabel }}</div>
+              <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.IconButton" icon="rotate_right" variant="filled" size="md" label="Повернути на +90°" on-click="{{ rotateRight }}" hint-size="40px,40px"></x-import>
+            </div>
+          </x-import>
+        </div>
+
+        <div style="{{ sectionStyle }}">
+          <div style="{{ sectionLabelStyle }}">Заповнення</div>
+          <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Card" variant="default" padding="md" dc-props="{{ cardProps }}" hint-size="100%,64px">
+            <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.SegmentedControl" options="{{ fillOptions }}" value="{{ fill }}" on-change="{{ setFill }}" full-width="{{ true }}" hint-size="100%,40px"></x-import>
+          </x-import>
+        </div>
+
+        <div style="{{ sectionStyle }}">
+          <div style="{{ sectionLabelStyle }}">Стиль і форма</div>
+          <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Card" variant="default" padding="md" dc-props="{{ cardProps }}" hint-size="100%,140px">
+            <div style="{{ shapeColStyle }}">
+              <div style="{{ frameSelectorWrapStyle }}">
+                <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.FrameStyleSelector" value="{{ shape }}" on-change="{{ setShape }}" hint-size="auto,84px"></x-import>
+              </div>
+              <sc-if value="{{ isShapeRounded }}" hint-placeholder-val="{{ false }}">
+                <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Slider" label="Скруглення кутів" value="{{ radius }}" min="{{ 0 }}" max="{{ 100 }}" on-change="{{ setRadius }}" hint-size="100%,48px"></x-import>
+              </sc-if>
+            </div>
+          </x-import>
+        </div>
+
+        <div style="{{ sectionStyle }}">
+          <div style="{{ sectionLabelStyle }}">Назва віджета</div>
+          <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Input" placeholder="Наприклад, «Мама і тато»" value="{{ name }}" on-change="{{ setName }}" hint-size="100%,44px"></x-import>
+        </div>
+
+        <div style="{{ sectionStyle }}">
+          <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Card" variant="default" padding="md" dc-props="{{ cardProps }}" hint-size="100%,88px">
+            <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Select" label="Дія по кліку" options="{{ actionOptions }}" value="{{ clickAction }}" on-change="{{ setClickAction }}" hint-size="100%,64px"></x-import>
+          </x-import>
+        </div>
+
+      </div>
+
+      <div style="{{ stickyActionsStyle }}">
+        <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Button" variant="secondary" size="lg" hint-size="auto,52px">Скасувати</x-import>
+        <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Button" variant="primary" size="lg" hint-size="auto,52px">Зберегти</x-import>
+      </div>
+
+      <div style="{{ bannerStyle }}">Рекламний банер</div>
+    </div>
+  </x-import>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light'|'dark'&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;]},&quot;hasPhoto&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { alignment: 'center', rotation: 0, fill: 'cover', shape: 'rounded', radius: 24, name: '', clickAction: 'none' };
+
+  renderVals() {
+    const s = (obj) => Object.entries(obj).map(([k, v]) => {
+      const prop = k.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
+      return `${prop}:${typeof v === 'number' ? v + 'px' : v}`;
+    }).join(';');
+
+    const theme = this.props.theme ?? 'light';
+    const isDark = theme === 'dark';
+    const hasPhoto = this.props.hasPhoto ?? true;
+    const dark = {
+      bg: '#201D18', card: '#2B2823', sunken: '#272319', border: '#3A362E',
+      textPrimary: '#F5F1EA', textMuted: '#B4AC9B',
+    };
+    // Cascade dark equivalents into every DS component (Card/Select/Input/Chip/etc.
+    // read these root tokens directly — the design system defines light values only).
+    const darkTokenVars = isDark ? {
+      '--surface-app': dark.bg, '--surface-card': dark.card, '--surface-sunken': dark.sunken,
+      '--surface-raised': '#332F28', '--text-primary': dark.textPrimary, '--text-secondary': '#D8D2C4',
+      '--text-muted': dark.textMuted, '--border-subtle': dark.border, '--border-default': dark.border,
+      '--border-strong': '#5A5548',
+    } : {};
+
+    const shellBase = { width: '100%', height: '100%', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' };
+    const headerBase = { display: 'flex', alignItems: 'center', gap: 'var(--space-2)', padding: 'var(--space-4) var(--space-3)', flexShrink: 0 };
+    const contentBase = { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-6)', padding: 'var(--space-5)', overflowY: 'auto', minHeight: 0 };
+    const sectionBase = { display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', width: '100%' };
+    const bannerBase = { flexShrink: 0, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', font: `400 var(--fs-caption)/1 var(--font-body)`, letterSpacing: 'var(--tracking-wide)' };
+    const stickyActionsBase = { flexShrink: 0, display: 'flex', gap: 'var(--space-3)', padding: 'var(--space-4) var(--space-5)' };
+    const cardStyleLight = { background: 'var(--surface-card)' };
+    const cardStyleDark = { background: dark.card, borderColor: dark.border, boxShadow: 'none' };
+
+    const rotationLabels = { 0: '0°', 90: '90°', 180: '180°', 270: '270°' };
+
+    return {
+      isDark,
+      photoState: hasPhoto ? 'loaded' : 'empty',
+      photoBtnLabel: hasPhoto ? 'Змінити фото' : 'Обрати фото',
+      noop: () => {},
+
+      alignment: this.state.alignment,
+      setAlignment: v => this.setState({ alignment: v }),
+      rotation: this.state.rotation,
+      rotationLabel: rotationLabels[this.state.rotation] ?? `${this.state.rotation}°`,
+      rotateLeft: () => this.setState(st => ({ rotation: ((st.rotation - 90) % 360 + 360) % 360 })),
+      rotateRight: () => this.setState(st => ({ rotation: (st.rotation + 90) % 360 })),
+
+      fill: this.state.fill,
+      fillOptions: [{ value: 'cover', label: 'Cover' }, { value: 'contain', label: 'Contain' }],
+      setFill: v => this.setState({ fill: v }),
+
+      shape: this.state.shape,
+      isShapeRounded: this.state.shape === 'rounded',
+      setShape: v => this.setState({ shape: v }),
+      radius: this.state.radius,
+      setRadius: v => this.setState({ radius: v }),
+
+      name: this.state.name,
+      setName: v => this.setState({ name: v }),
+
+      clickAction: this.state.clickAction,
+      actionOptions: [{ value: 'none', label: 'Без дії' }, { value: 'app', label: 'Відкрити додаток' }, { value: 'widget', label: 'Відкрити цей віджет' }],
+      setClickAction: v => this.setState({ clickAction: v }),
+
+      shellStyle: s({ ...shellBase, ...darkTokenVars, background: isDark ? dark.bg : 'var(--surface-app)' }),
+      headerStyle: s({ ...headerBase, background: isDark ? dark.bg : 'var(--surface-app)', borderBottom: `1px solid ${isDark ? dark.border : 'var(--border-subtle)'}` }),
+      backBtnStyle: s({ width: 40, height: 40, borderRadius: 'var(--radius-pill)', border: 'none', background: 'transparent', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: isDark ? dark.textPrimary : 'var(--text-primary)', transition: 'background var(--duration-fast) var(--ease-calm), transform var(--duration-fast) var(--ease-calm)', flexShrink: 0 }),
+      headerSpacerStyle: s({ width: 40, flexShrink: 0 }),
+      titleStyle: s({ flex: 1, textAlign: 'center', font: `italic 400 18px/1.2 var(--font-display)`, color: isDark ? dark.textPrimary : 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }),
+
+      contentStyle: s(contentBase),
+      previewWrapStyle: s({ display: 'flex', justifyContent: 'center', marginTop: 'var(--space-2)' }),
+      ctaRowCenterStyle: s({ display: 'flex', justifyContent: 'center' }),
+
+      sectionStyle: s(sectionBase),
+      sectionLabelStyle: s({ font: `600 var(--fs-body-sm)/1.3 var(--font-body)`, color: isDark ? dark.textMuted : 'var(--text-secondary)' }),
+      cardProps: { style: isDark ? cardStyleDark : cardStyleLight },
+
+      alignRowStyle: s({ display: 'flex', justifyContent: 'center' }),
+      rotationRowStyle: s({ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-5)' }),
+      rotationValueStyle: s({ font: `600 var(--fs-body)/1 var(--font-body)`, color: isDark ? dark.textPrimary : 'var(--text-primary)', minWidth: 48, textAlign: 'center' }),
+
+      shapeColStyle: s({ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }),
+      frameSelectorWrapStyle: s({ display: 'flex', justifyContent: 'center', width: '100%', overflowX: 'auto', paddingBottom: 2 }),
+      chipRowStyle: s({ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }),
+
+      stickyActionsStyle: s({ ...stickyActionsBase, borderTop: `1px solid ${isDark ? dark.border : 'var(--border-subtle)'}`, background: isDark ? dark.bg : 'var(--surface-app)' }),
+      bannerStyle: s({ ...bannerBase, background: isDark ? dark.sunken : 'var(--surface-sunken)', borderTop: `1px solid ${isDark ? dark.border : 'var(--border-subtle)'}`, color: isDark ? dark.textMuted : 'var(--text-muted)' }),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

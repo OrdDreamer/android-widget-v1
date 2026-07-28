@@ -1,246 +1,108 @@
 package com.photowidget.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
-// Every value below is the exact sRGB conversion of the oklch(...) token used at the same
-// spot in "Photo Widget App - Vibrant.dc.html" (OKLab -> linear sRGB, D65), not an approximation.
+// Raw palette, exact hex from the "Photo Widget Design System" v3 token manifest
+// (go-to-market/design/v3/Photo Widget Design System/_ds_manifest.json). Light values are the
+// system's only defined theme; dark values are reverse-engineered from the identical inline
+// `dark = {...}` palette repeated in every screen mock under
+// "Photo Widget дизайн-handoff/photo-widget/project/*.dc.html" — the only dark-mode spec that
+// exists for this design.
 
-val ScreenBgTopLight = Color(0xFFF0F5FF)
-val ScreenBgBottomLight = Color(0xFFEAE9F8)
-val ScreenBgTopDark = Color(0xFF121522)
-val ScreenBgBottomDark = Color(0xFF0B0917)
+val Cream50 = Color(0xFFFBF8F3)
+val Cream100 = Color(0xFFF5F1EA)
+val Cream200 = Color(0xFFECE4D6)
+val Cream300 = Color(0xFFE0D5C0)
 
-val TitleGradStartLight = Color(0xFF1E49B7)
-val TitleGradEndLight = Color(0xFF802BAF)
-val TitleGradStartDark = Color(0xFF89B5FF)
-val TitleGradEndDark = Color(0xFFDD9FFF)
+val Ink900 = Color(0xFF211F1B)
+val Ink700 = Color(0xFF3D3A34)
+val Ink500 = Color(0xFF6B675E)
+val Ink300 = Color(0xFFA8A296)
 
-val OnSurfaceLight = Color(0xFF151A29)
-val OnSurfaceDark = Color(0xFFE2E4EB)
-val OnSurfaceVariantLight = Color(0xFF545669)
-val OnSurfaceVariantDark = Color(0xFF8F919F)
+val Terracotta100 = Color(0xFFF3DCCB)
+val Terracotta300 = Color(0xFFD99A6C)
+val Terracotta500 = Color(0xFFB4693E)
+val Terracotta700 = Color(0xFF8C4C29)
+val Terracotta900 = Color(0xFF5E3018)
 
-val IconBoxStartLight = Color(0xFFCDDEFF)
-val IconBoxEndLight = Color(0xFFDCC2F1)
-val IconBoxStartDark = Color(0xFF2C416D)
-val IconBoxEndDark = Color(0xFF3B235D)
+val Sage100 = Color(0xFFE3E8DD)
+val Sage300 = Color(0xFFACBC9C)
+val Sage500 = Color(0xFF7D8C6C)
+val Sage700 = Color(0xFF5C6850)
+val Sage900 = Color(0xFF3A4232)
 
-val BrandAccentLight = Color(0xFF3969D9)
-val BrandAccentDark = Color(0xFFA0BEF9)
+val StatusRed500 = Color(0xFFB4453E)
+val StatusAmber500 = Color(0xFFC99A3E)
 
-val CtaStartLight = Color(0xFF49A9FF)
-val CtaEndLight = Color(0xFFB24DC8)
-val CtaStartDark = Color(0xFF2784D5)
-val CtaEndDark = Color(0xFF882E9B)
+// Two inconsistent non-tokenized "danger tint" hexes appear across the web components
+// (Badge danger bg #F2DEDC vs PhotoPreview-error/InlineErrorBanner #F6E4E2 + border #E3B9B4) —
+// normalized here to one pair used everywhere in the Compose rebuild.
+val StatusDangerSubtleBgLight = Color(0xFFF6E4E2)
+val StatusDangerSubtleBorderLight = Color(0xFFE3B9B4)
 
-// Hero illustration colors live baked into empty_state_hero.png /
-// drawable-night-nodpi/empty_state_hero.png (generated from these same oklch values) rather
-// than as brushes here — see the raster asset for why.
+val DarkBg = Color(0xFF201D18)
+val DarkCard = Color(0xFF2B2823)
+val DarkSunken = Color(0xFF272319)
+val DarkBorder = Color(0xFF3A362E)
+val DarkBorderStrong = Color(0xFF5A5548)
+val DarkRaised = Color(0xFF332F28)
+val DarkTextPrimary = Color(0xFFF5F1EA)
+val DarkTextSecondary = Color(0xFFD8D2C4)
+val DarkTextMuted = Color(0xFFB4AC9B)
 
-val StepBadgeStartLight = Color(0xFF4BA3F7)
-val StepBadgeEndLight = Color(0xFF9867E1)
-val StepBadgeStartDark = Color(0xFF1F74BF)
-val StepBadgeEndDark = Color(0xFF6635A3)
+// Semantic tokens -------------------------------------------------------------------------
 
-val AdBannerBgLight = Color(0xFFDADCF2)
-val AdBannerBgDark = Color(0xFF22232E)
+val SurfaceAppLight = Cream100
+val SurfaceAppDark = DarkBg
+val SurfaceCardLight = Cream50
+val SurfaceCardDark = DarkCard
+val SurfaceSunkenLight = Cream200
+val SurfaceSunkenDark = DarkSunken
+val SurfaceRaisedLight = Color(0xFFFFFFFF)
+val SurfaceRaisedDark = DarkRaised
 
-val CardSurfaceLight = Color(0xFFFDFCF7)
-val CardSurfaceDark = Color(0xFF1B1F29)
+val TextPrimaryLight = Ink900
+val TextPrimaryDark = DarkTextPrimary
+val TextSecondaryLight = Ink700
+val TextSecondaryDark = DarkTextSecondary
+val TextMutedLight = Ink500
+val TextMutedDark = DarkTextMuted
 
-val OutlineLight = Color(0xFFCBCDDB)
-val OutlineDark = Color(0xFF40414D)
+val BorderSubtleLight = Color(0xFFE4DDCE)
+val BorderSubtleDark = DarkBorder
+val BorderDefaultLight = Color(0xFFD6CCB8)
+val BorderDefaultDark = DarkBorder
+val BorderStrongLight = Ink300
+val BorderStrongDark = DarkBorderStrong
 
-val EditIconTintLight = Color(0xFF382D93)
-val EditIconTintDark = Color(0xFFB8BEFE)
+// The design system never overrides accent/surface-inverse/focus-ring for dark screens (its
+// per-mock `darkTokenVars` swap only touches surface/text/border roles) — these stay constant
+// across themes by design intent, not oversight.
+val AccentPrimary = Terracotta500
+val AccentPrimaryHover = Terracotta700
+val AccentPrimarySubtleLight = Terracotta100
+// Mirrors the one concrete dark-accent-tint example in the mocks (Home Empty step-number
+// badge): `rgba(217,154,108,0.18)` = Terracotta300 at 18% alpha over a dark surface.
+val AccentPrimarySubtleDark = Terracotta300.copy(alpha = 0.18f)
+val AccentSecondary = Sage500
+val AccentSecondaryHover = Sage700
+val AccentSecondarySubtleLight = Sage100
+val AccentSecondarySubtleDark = Sage300.copy(alpha = 0.18f)
 
-val AccentGradStartLight = Color(0xFF60AAF3)
-val AccentGradEndLight = Color(0xFFAA6CD4)
-val AccentGradStartDark = Color(0xFF1F74BF)
-val AccentGradEndDark = Color(0xFF7C298E)
+val FocusRing = Terracotta500
 
-val PillTrackBgLight = Color(0xFFE1E3F2)
-val PillTrackBgDark = Color(0xFF272833)
+val StatusSuccess = Sage700
+val StatusWarning = StatusAmber500
+val StatusDanger = StatusRed500
+val StatusDangerSubtleBg = StatusDangerSubtleBgLight
+val StatusDangerSubtleBorder = StatusDangerSubtleBorderLight
 
-val DividerLight = Color(0xFFE6E7EF)
-val DividerDark = Color(0xFF323238)
+// Toast/Tooltip intentionally stay ink-on-cream regardless of app theme (the token
+// `--surface-inverse` is defined once and never swapped by the mocks' dark overrides).
+val SurfaceInverse = Ink900
+val TextInverse = Cream50
 
-val DashedBoxBgStartLight = Color(0xFFC7D8F9)
-val DashedBoxBgEndLight = Color(0xFFD9BEED)
-val DashedBoxBgStartDark = Color(0xFF233251)
-val DashedBoxBgEndDark = Color(0xFF2F1D4A)
-val DashedBoxBorderLight = Color(0xFF979BC4)
-val DashedBoxBorderDark = Color(0xFF4F5276)
-
-val ChoosePhotoTextLight = Color(0xFF31248A)
-val ChoosePhotoTextDark = Color(0xFFA7C4FF)
-
-val ErrorBgLight = Color(0xFFFFEBE8)
-val ErrorBgDark = Color(0xFF3A211F)
-val ErrorAccentLight = Color(0xFFCC243D)
-val ErrorAccentDark = Color(0xFFFF8D8F)
-
-val FrameClassicStartLight = Color(0xFFAABEE5)
-val FrameClassicEndLight = Color(0xFFB2A0D6)
-val FrameClassicStartDark = Color(0xFF34476E)
-val FrameClassicEndDark = Color(0xFF402B5F)
-
-val FrameMinimalStartLight = Color(0xFFB4C5E5)
-val FrameMinimalEndLight = Color(0xFFB8A8D8)
-val FrameMinimalStartDark = Color(0xFF3C4D6E)
-val FrameMinimalEndDark = Color(0xFF443261)
-
-val FrameVintageStartLight = Color(0xFFE6C58F)
-val FrameVintageEndLight = Color(0xFFECA57D)
-val FrameVintageStartDark = Color(0xFF6C4C02)
-val FrameVintageEndDark = Color(0xFF6E2B00)
-
-val FramePolaroidInnerStartLight = Color(0xFF96BBE3)
-val FramePolaroidInnerEndLight = Color(0xFFAB87C7)
-val FramePolaroidInnerStartDark = Color(0xFF305880)
-val FramePolaroidInnerEndDark = Color(0xFF542E6D)
-
-// Material color scheme -----------------------------------------------------------------
-
-val LightPrimary = BrandAccentLight
-val LightOnPrimary = Color(0xFFFFFFFF)
-val LightPrimaryContainer = IconBoxStartLight
-val LightOnPrimaryContainer = EditIconTintLight
-val LightSecondaryContainer = Color(0xFFEDE8F5)
-val LightOnSecondaryContainer = Color(0xFF3A2F55)
-val LightBackground = ScreenBgTopLight
-val LightSurface = CardSurfaceLight
-val LightOnSurface = OnSurfaceLight
-val LightSurfaceVariant = Color(0xFFF3F0FA)
-val LightOnSurfaceVariant = OnSurfaceVariantLight
-val LightOutline = OutlineLight
-val LightOutlineVariant = DividerLight
-val LightError = ErrorAccentLight
-val LightOnError = Color(0xFFFFFFFF)
-
-val DarkPrimary = BrandAccentDark
-val DarkOnPrimary = Color(0xFF17284A)
-val DarkPrimaryContainer = IconBoxStartDark
-val DarkOnPrimaryContainer = EditIconTintDark
-val DarkSecondaryContainer = Color(0xFF3A3350)
-val DarkOnSecondaryContainer = Color(0xFFE6E0F2)
-val DarkBackground = ScreenBgTopDark
-val DarkSurface = CardSurfaceDark
-val DarkOnSurface = OnSurfaceDark
-val DarkSurfaceVariant = Color(0xFF2C2738)
-val DarkOnSurfaceVariant = OnSurfaceVariantDark
-val DarkOutline = OutlineDark
-val DarkOutlineVariant = DividerDark
-val DarkError = ErrorAccentDark
-val DarkOnError = Color(0xFF3A211F)
-
-// Brushes ---------------------------------------------------------------------------------
-
-@Composable
-fun brandTitleBrush(): Brush = Brush.horizontalGradient(
-    colors = if (isSystemInDarkTheme()) {
-        listOf(TitleGradStartDark, TitleGradEndDark)
-    } else {
-        listOf(TitleGradStartLight, TitleGradEndLight)
-    },
-)
-
-@Composable
-fun brandPrimaryBrush(): Brush = Brush.horizontalGradient(
-    colors = if (isSystemInDarkTheme()) {
-        listOf(CtaStartDark, CtaEndDark)
-    } else {
-        listOf(CtaStartLight, CtaEndLight)
-    },
-)
-
-@Composable
-fun accentGradientBrush(): Brush = Brush.linearGradient(
-    colors = if (isSystemInDarkTheme()) {
-        listOf(AccentGradStartDark, AccentGradEndDark)
-    } else {
-        listOf(AccentGradStartLight, AccentGradEndLight)
-    },
-)
-
-/** Tint for icons sitting inside an [iconBoxBrush] tile: settings gear, edit pencil, placeholder glyph. */
-@Composable
-fun brandIconTint(): Color = if (isSystemInDarkTheme()) EditIconTintDark else EditIconTintLight
-
-@Composable
-fun iconBoxBrush(): Brush = Brush.linearGradient(
-    colors = if (isSystemInDarkTheme()) {
-        listOf(IconBoxStartDark, IconBoxEndDark)
-    } else {
-        listOf(IconBoxStartLight, IconBoxEndLight)
-    },
-)
-
-@Composable
-fun stepBadgeBrush(): Brush = Brush.linearGradient(
-    colors = if (isSystemInDarkTheme()) {
-        listOf(StepBadgeStartDark, StepBadgeEndDark)
-    } else {
-        listOf(StepBadgeStartLight, StepBadgeEndLight)
-    },
-)
-
-@Composable
-fun dashedBoxBackgroundBrush(): Brush = Brush.linearGradient(
-    colors = if (isSystemInDarkTheme()) {
-        listOf(DashedBoxBgStartDark, DashedBoxBgEndDark)
-    } else {
-        listOf(DashedBoxBgStartLight, DashedBoxBgEndLight)
-    },
-)
-
-@Composable
-fun dashedBoxBorderColor(): Color = if (isSystemInDarkTheme()) DashedBoxBorderDark else DashedBoxBorderLight
-
-@Composable
-fun choosePhotoTextColor(): Color = if (isSystemInDarkTheme()) ChoosePhotoTextDark else ChoosePhotoTextLight
-
-@Composable
-fun listThumbnailPlaceholderBorderColor(): Color =
-    (if (isSystemInDarkTheme()) BrandAccentDark else BrandAccentLight).copy(alpha = 0.5f)
-
-@Composable
-fun adBannerBackgroundColor(): Color = if (isSystemInDarkTheme()) AdBannerBgDark else AdBannerBgLight
-
-@Composable
-fun pillTrackBackgroundColor(): Color = if (isSystemInDarkTheme()) PillTrackBgDark else PillTrackBgLight
-
-@Composable
-fun errorContainerColor(): Color = if (isSystemInDarkTheme()) ErrorBgDark else ErrorBgLight
-
-@Composable
-fun errorAccentColor(): Color = if (isSystemInDarkTheme()) ErrorAccentDark else ErrorAccentLight
-
-@Composable
-fun frameSwatchBrush(style: com.photowidget.data.FrameStyle): Brush {
-    val dark = isSystemInDarkTheme()
-    val (start, end) = when (style) {
-        com.photowidget.data.FrameStyle.CLASSIC ->
-            if (dark) FrameClassicStartDark to FrameClassicEndDark else FrameClassicStartLight to FrameClassicEndLight
-        com.photowidget.data.FrameStyle.MINIMAL ->
-            if (dark) FrameMinimalStartDark to FrameMinimalEndDark else FrameMinimalStartLight to FrameMinimalEndLight
-        com.photowidget.data.FrameStyle.VINTAGE ->
-            if (dark) FrameVintageStartDark to FrameVintageEndDark else FrameVintageStartLight to FrameVintageEndLight
-        com.photowidget.data.FrameStyle.POLAROID ->
-            if (dark) {
-                FramePolaroidInnerStartDark to FramePolaroidInnerEndDark
-            } else {
-                FramePolaroidInnerStartLight to FramePolaroidInnerEndLight
-            }
-    }
-    return Brush.linearGradient(colors = listOf(start, end))
-}
-
-fun screenBackgroundBrush(dark: Boolean): Brush = if (dark) {
-    Brush.verticalGradient(colors = listOf(ScreenBgTopDark, ScreenBgBottomDark))
-} else {
-    Brush.verticalGradient(colors = listOf(ScreenBgTopLight, ScreenBgBottomLight))
-}
+// Warm-tinted shadow color (never pure black), per guidelines/jetpack-compose.md's Elevation
+// section — alpha varies by elevation tier, applied in Elevation.kt.
+val ShadowTintLight = Ink900
+val ShadowTintDark = Color(0xFF000000)

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/styles.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0..200">
+  <script src="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/_ds_bundle.js"></script>
+  <script src="./image-slot.js"></script>
+  <style>
+    body{margin:0;background:var(--pw-cream-200);font-family:var(--font-body);}
+    a{color:var(--accent-primary)}a:hover{color:var(--accent-primary-hover)}
+  </style>
+</helmet>
+<div style="display:flex;align-items:flex-start;justify-content:center;padding:64px 40px;">
+  <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="{{ isDark }}" hint-size="412px,892px">
+    <div style="{{ shellStyle }}">
+      <div style="{{ headerStyle }}">
+        <div style="{{ titleStyle }}">Photo Widget</div>
+        <button type="button" aria-label="Налаштування" style="{{ settingsBtnStyle }}" style-hover="background: color-mix(in srgb, currentColor 12%, transparent);" style-active="transform: scale(0.94);"><span class="material-symbols-rounded" style="font-size:20px">settings</span></button>
+      </div>
+
+      <div style="{{ listStyle }}">
+        <sc-for list="{{ widgets }}" as="w" hint-placeholder-count="4">
+          <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Card" variant="default" padding="sm" dc-props="{{ w.cardProps }}" hint-size="100%,108px">
+            <div style="{{ rowStyle }}">
+              <div style="{{ photoLeftStyle }}">
+                <sc-if value="{{ w.hasPhoto }}" hint-placeholder-val="{{ true }}">
+                  <image-slot id="{{ w.slotId }}" shape="rect" placeholder="Фото" style="width:100%;height:100%"></image-slot>
+                </sc-if>
+                <sc-if value="{{ w.noPhoto }}" hint-placeholder-val="{{ false }}">
+                  <div style="{{ emptyPhotoStyle }}">
+                    <span class="material-symbols-rounded" style="{{ emptyPhotoIconStyle }}">image</span>
+                  </div>
+                </sc-if>
+              </div>
+              <div style="{{ bodyRightStyle }}">
+                <div style="{{ w.titleStyle }}">{{ w.title }}</div>
+                <div style="{{ w.subtitleStyle }}">{{ w.subtitle }}</div>
+                <div style="{{ rowActionsStyle }}">
+                  <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Button" variant="primary" size="sm" hint-size="auto,32px">Edit</x-import>
+                  <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Button" variant="secondary" size="sm" hint-size="auto,32px">Reset</x-import>
+                </div>
+              </div>
+            </div>
+          </x-import>
+        </sc-for>
+      </div>
+
+      <div style="{{ stickyCtaWrapStyle }}">
+        <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Button" variant="primary" size="lg" icon="add" hint-size="auto,52px">Додати віджет</x-import>
+      </div>
+
+      <div style="{{ bannerStyle }}">Рекламний банер</div>
+    </div>
+  </x-import>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light'|'dark'&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;]}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = (obj) => Object.entries(obj).map(([k, v]) => {
+      const prop = k.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
+      return `${prop}:${typeof v === 'number' ? v + 'px' : v}`;
+    }).join(';');
+
+    const theme = this.props.theme ?? 'light';
+    const isDark = theme === 'dark';
+    const dark = {
+      bg: '#201D18', card: '#2B2823', sunken: '#272319', border: '#3A362E',
+      textPrimary: '#F5F1EA', textMuted: '#B4AC9B',
+    };
+
+    const shellBase = { width: '100%', height: '100%', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' };
+    const headerBase = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-5) var(--space-5)', flexShrink: 0 };
+    const listBase = { flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', padding: 'var(--space-5)', overflowY: 'auto', minHeight: 0 };
+    const rowBase = { display: 'flex', gap: 0, overflow: 'hidden' };
+    const photoLeftBase = { flexShrink: 0, width: 108, alignSelf: 'stretch', borderRadius: 'var(--radius-md)', overflow: 'hidden', background: isDark ? dark.sunken : 'var(--surface-sunken)', color: isDark ? dark.border : 'var(--border-default)', border: `1px solid ${isDark ? dark.border : 'var(--border-subtle)'}` };
+    const bodyRightBase = { flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 'var(--space-2)', padding: 'var(--space-4)', minWidth: 0 };
+    const rowActionsBase = { display: 'flex', flexDirection: 'row', gap: 'var(--space-2)', marginTop: 4 };
+    const bannerBase = { flexShrink: 0, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', font: `400 var(--fs-caption)/1 var(--font-body)`, letterSpacing: 'var(--tracking-wide)' };
+    const stickyCtaBase = { flexShrink: 0, padding: 'var(--space-4) var(--space-5)' };
+    const titleTextBase = { font: `600 var(--fs-body)/1.3 var(--font-body)`, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' };
+    const subtitleTextBase = { font: `400 var(--fs-body-sm)/1.3 var(--font-body)` };
+    const cardStyleLight = { background: 'var(--surface-card)' };
+    const cardStyleDark = { background: dark.card, borderColor: dark.border, boxShadow: 'none' };
+
+    const data = [
+      { hasPhoto: true, title: 'Мама і тато', subtitle: '2×2 · на головному екрані' },
+      { hasPhoto: false, title: 'Кухонний стіл', subtitle: 'Фото не вибрано' },
+      { hasPhoto: true, title: 'Літо на дачі', subtitle: '4×4 · оновлюється щодня' },
+      { hasPhoto: false, title: 'Наша подорож', subtitle: 'Фото не вибрано' },
+    ];
+
+    const widgets = data.map((d, i) => ({
+      title: d.title,
+      subtitle: d.subtitle,
+      photoState: d.hasPhoto ? 'loaded' : 'empty',
+      hasPhoto: d.hasPhoto,
+      noPhoto: !d.hasPhoto,
+      slotId: 'widget-list-' + i,
+      titleStyle: s({ ...titleTextBase, color: isDark ? dark.textPrimary : 'var(--text-primary)' }),
+      subtitleStyle: s({ ...subtitleTextBase, color: isDark ? dark.textMuted : 'var(--text-muted)' }),
+      cardProps: { style: isDark ? cardStyleDark : cardStyleLight },
+    }));
+
+    return {
+      isDark,
+      widgets,
+      shellStyle: s({ ...shellBase, background: isDark ? dark.bg : 'var(--surface-app)' }),
+      headerStyle: s({ ...headerBase, background: isDark ? dark.bg : 'var(--surface-app)', borderBottom: `1px solid ${isDark ? dark.border : 'var(--border-subtle)'}` }),
+      titleStyle: s({ font: `italic 400 20px/1.2 var(--font-display)`, color: isDark ? dark.textPrimary : 'var(--text-primary)' }),
+      settingsBtnStyle: s({ width: 40, height: 40, borderRadius: 'var(--radius-pill)', border: 'none', background: 'transparent', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: isDark ? dark.textPrimary : 'var(--text-primary)', transition: 'background var(--duration-fast) var(--ease-calm), transform var(--duration-fast) var(--ease-calm)' }),
+
+      listStyle: s(listBase),
+      rowStyle: s(rowBase),
+      photoLeftStyle: s(photoLeftBase),
+      emptyPhotoStyle: s({ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: isDark ? dark.sunken : 'var(--surface-sunken)' }),
+      emptyPhotoIconStyle: s({ fontSize: 28, color: isDark ? dark.textMuted : 'var(--text-muted)' }),
+      bodyRightStyle: s(bodyRightBase),
+      rowActionsStyle: s(rowActionsBase),
+
+      stickyCtaWrapStyle: s({ ...stickyCtaBase, borderTop: `1px solid ${isDark ? dark.border : 'var(--border-subtle)'}`, background: isDark ? dark.bg : 'var(--surface-app)' }),
+      bannerStyle: s({ ...bannerBase, background: isDark ? dark.sunken : 'var(--surface-sunken)', borderTop: `1px solid ${isDark ? dark.border : 'var(--border-subtle)'}`, color: isDark ? dark.textMuted : 'var(--text-muted)' }),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

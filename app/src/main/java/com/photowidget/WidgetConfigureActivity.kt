@@ -11,8 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.photowidget.data.WidgetConfig
-import com.photowidget.ui.WidgetSettingsScreen
 import com.photowidget.ui.enablePhotoWidgetEdgeToEdge
+import com.photowidget.ui.screens.widgetsettings.WidgetSettingsScreen
 import com.photowidget.ui.theme.PhotoWidgetTheme
 import com.photowidget.widget.PhotoWidgetReceiver
 import com.photowidget.widget.WidgetUpdateHelper

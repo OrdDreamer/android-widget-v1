@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/styles.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0..200">
+  <script src="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/_ds_bundle.js"></script>
+  <style>
+    body{margin:0;background:var(--pw-cream-200);font-family:var(--font-body);}
+    a{color:var(--accent-primary)}a:hover{color:var(--accent-primary-hover)}
+  </style>
+</helmet>
+<div style="display:flex;align-items:flex-start;justify-content:center;padding:64px 40px;">
+  <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="{{ isDark }}" hint-size="412px,892px">
+    <div style="{{ shellStyle }}">
+      <div style="{{ headerStyle }}">
+        <button type="button" aria-label="Назад" style="{{ backBtnStyle }}" style-hover="background: color-mix(in srgb, currentColor 12%, transparent);" style-active="transform: scale(0.94);"><span class="material-symbols-rounded" style="font-size:22px">arrow_back</span></button>
+        <div style="{{ titleStyle }}">About</div>
+        <div style="{{ headerSpacerStyle }}"></div>
+      </div>
+
+      <div style="{{ contentStyle }}">
+        <div style="{{ heroWrapStyle }}">
+          <div style="{{ markStyle }}">Photo Widget</div>
+        </div>
+        <div style="{{ descStyle }}">Тримає важливі фото завжди в полі зору — на вашому робочому столі.</div>
+        <div style="{{ versionStyle }}">Версія 1.0.0</div>
+
+        <div style="{{ supportWrapStyle }}">
+          <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Card" variant="default" padding="lg" dc-props="{{ cardProps }}" hint-size="100%,140px">
+            <div style="{{ supportColStyle }}">
+              <div style="{{ supportTitleStyle }}">Зроблено із теплом</div>
+              <div style="{{ supportTextStyle }}">Photo Widget створює невелика команда. Якщо додаток вам подобається — підтримайте нас оцінкою в Google Play.</div>
+              <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Button" variant="secondary" size="md" icon="favorite" hint-size="auto,44px">Підтримати автора</x-import>
+            </div>
+          </x-import>
+        </div>
+
+        <div style="{{ byLineStyle }}">by Siver Company</div>
+      </div>
+
+      <div style="{{ bannerStyle }}">Рекламний банер</div>
+    </div>
+  </x-import>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light'|'dark'&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;]}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = (obj) => Object.entries(obj).map(([k, v]) => {
+      const prop = k.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
+      return `${prop}:${typeof v === 'number' ? v + 'px' : v}`;
+    }).join(';');
+
+    const theme = this.props.theme ?? 'light';
+    const isDark = theme === 'dark';
+    const dark = {
+      bg: '#201D18', card: '#2B2823', sunken: '#272319', border: '#3A362E',
+      textPrimary: '#F5F1EA', textMuted: '#B4AC9B',
+    };
+    const darkTokenVars = isDark ? {
+      '--surface-app': dark.bg, '--surface-card': dark.card, '--surface-sunken': dark.sunken,
+      '--surface-raised': '#332F28', '--text-primary': dark.textPrimary, '--text-secondary': '#D8D2C4',
+      '--text-muted': dark.textMuted, '--border-subtle': dark.border, '--border-default': dark.border,
+      '--border-strong': '#5A5548',
+    } : {};
+    const borderColor = isDark ? dark.border : 'var(--border-subtle)';
+
+    const shellBase = { width: '100%', height: '100%', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' };
+    const headerBase = { display: 'flex', alignItems: 'center', gap: 'var(--space-2)', padding: 'var(--space-4) var(--space-3)', flexShrink: 0 };
+    const contentBase = { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 'var(--space-2)', padding: 'var(--space-8) var(--space-6) var(--space-6)', overflowY: 'auto', minHeight: 0 };
+    const bannerBase = { flexShrink: 0, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', font: `400 var(--fs-caption)/1 var(--font-body)`, letterSpacing: 'var(--tracking-wide)' };
+    const cardStyleLight = { background: 'var(--surface-card)' };
+    const cardStyleDark = { background: dark.card, borderColor: dark.border, boxShadow: 'none' };
+
+    return {
+      isDark,
+      shellStyle: s({ ...shellBase, ...darkTokenVars, background: isDark ? dark.bg : 'var(--surface-app)' }),
+      headerStyle: s({ ...headerBase, background: isDark ? dark.bg : 'var(--surface-app)', borderBottom: `1px solid ${borderColor}` }),
+      backBtnStyle: s({ width: 40, height: 40, borderRadius: 'var(--radius-pill)', border: 'none', background: 'transparent', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: isDark ? dark.textPrimary : 'var(--text-primary)', transition: 'background var(--duration-fast) var(--ease-calm), transform var(--duration-fast) var(--ease-calm)', flexShrink: 0 }),
+      headerSpacerStyle: s({ width: 40, flexShrink: 0 }),
+      titleStyle: s({ flex: 1, textAlign: 'center', font: `italic 400 18px/1.2 var(--font-display)`, color: isDark ? dark.textPrimary : 'var(--text-primary)' }),
+
+      contentStyle: s(contentBase),
+      heroWrapStyle: s({ width: 88, height: 88, borderRadius: 'var(--radius-xl)', background: isDark ? dark.sunken : 'var(--surface-sunken)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 'var(--space-2)' }),
+      markStyle: s({ font: `italic 400 15px/1.2 var(--font-display)`, color: isDark ? dark.textMuted : 'var(--text-muted)', padding: '0 8px', textAlign: 'center' }),
+
+      descStyle: s({ font: `400 var(--fs-body)/1.5 var(--font-body)`, color: isDark ? '#D8D2C4' : 'var(--text-secondary)', maxWidth: 280 }),
+      versionStyle: s({ font: `400 var(--fs-body-sm)/1.3 var(--font-body)`, color: isDark ? dark.textMuted : 'var(--text-muted)', marginTop: 2 }),
+
+      supportWrapStyle: s({ width: '100%', marginTop: 'var(--space-6)' }),
+      cardProps: { style: isDark ? cardStyleDark : cardStyleLight },
+      supportColStyle: s({ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-3)' }),
+      supportTitleStyle: s({ font: `italic 400 17px/1.2 var(--font-display)`, color: isDark ? dark.textPrimary : 'var(--text-primary)' }),
+      supportTextStyle: s({ font: `400 var(--fs-body-sm)/1.5 var(--font-body)`, color: isDark ? dark.textMuted : 'var(--text-muted)' }),
+
+      byLineStyle: s({ marginTop: 'var(--space-6)', font: `400 var(--fs-caption)/1 var(--font-body)`, letterSpacing: 'var(--tracking-wide)', color: isDark ? dark.textMuted : 'var(--text-muted)' }),
+
+      bannerStyle: s({ ...bannerBase, background: isDark ? dark.sunken : 'var(--surface-sunken)', borderTop: `1px solid ${borderColor}`, color: isDark ? dark.textMuted : 'var(--text-muted)' }),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

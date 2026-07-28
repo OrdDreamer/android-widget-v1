@@ -1,0 +1,13 @@
+:root{
+--font-display:'Lora',Georgia,serif;--font-body:'Karla',-apple-system,sans-serif;
+--fs-display-xl:44px;/* @kind other */--lh-display-xl:1.12;/* @kind other */
+--fs-display-lg:32px;/* @kind other */--lh-display-lg:1.18;/* @kind other */
+--fs-title:24px;/* @kind other */--lh-title:1.28;/* @kind other */
+--fs-subtitle:19px;/* @kind other */--lh-subtitle:1.4;/* @kind other */
+--fs-body-lg:18px;/* @kind other */--lh-body-lg:1.55;/* @kind other */
+--fs-body:16px;/* @kind other */--lh-body:1.55;/* @kind other */
+--fs-body-sm:14px;/* @kind other */--lh-body-sm:1.5;/* @kind other */
+--fs-caption:12px;/* @kind other */--lh-caption:1.4;/* @kind other */
+--fw-regular:400;/* @kind other */--fw-medium:500;/* @kind other */--fw-semibold:600;/* @kind other */
+--tracking-tight:-0.01em;/* @kind other */--tracking-normal:0;/* @kind other */--tracking-wide:0.04em;/* @kind other */
+}

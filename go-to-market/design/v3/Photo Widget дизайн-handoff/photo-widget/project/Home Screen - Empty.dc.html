@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/styles.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0..200">
+  <script src="_ds/photo-widget-design-system-69a50d31-8718-46d0-b478-b19799a4c344/_ds_bundle.js"></script>
+  <script src="./image-slot.js"></script>
+  <style>
+    body{margin:0;background:var(--pw-cream-200);font-family:var(--font-body);}
+    a{color:var(--accent-primary)}a:hover{color:var(--accent-primary-hover)}
+  </style>
+</helmet>
+<div style="display:flex;align-items:flex-start;justify-content:center;padding:64px 40px;">
+  <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="{{ isDark }}" hint-size="412px,892px">
+    <div style="{{ shellStyle }}">
+      <div style="{{ headerStyle }}">
+        <div style="{{ titleStyle }}">Photo Widget</div>
+        <button type="button" aria-label="Налаштування" style="{{ settingsBtnStyle }}" style-hover="background: color-mix(in srgb, currentColor 12%, transparent);" style-active="transform: scale(0.94);"><span class="material-symbols-rounded" style="font-size:20px">settings</span></button>
+      </div>
+      <div style="{{ contentStyle }}">
+        <div style="{{ heroWrapStyle }}">
+          <image-slot id="home-hero-illustration" shape="rect" placeholder="Hero-ілюстрація додатку" style="width:100%;height:100%"></image-slot>
+        </div>
+        <div style="{{ lowerStyle }}">
+          <div style="{{ stepsWrapStyle }}">
+            <div style="{{ stepRowStyle }}"><span style="{{ stepNumStyle }}">1</span><span style="{{ stepTextStyle }}">Натисніть і утримуйте порожнє місце на екрані</span></div>
+            <div style="{{ stepRowStyle }}"><span style="{{ stepNumStyle }}">2</span><span style="{{ stepTextStyle }}">Оберіть «Віджети» → Photo Widget</span></div>
+            <div style="{{ stepRowStyle }}"><span style="{{ stepNumStyle }}">3</span><span style="{{ stepTextStyle }}">Виберіть фото — і воно завжди поруч</span></div>
+          </div>
+          <div style="{{ ctaWrapStyle }}">
+            <x-import component-from-global-scope="PhotoWidgetDesignSystem_69a50d.Button" variant="primary" size="lg" icon="add" hint-size="auto,52px">Додати віджет</x-import>
+          </div>
+        </div>
+      </div>
+      <div style="{{ bannerStyle }}">Рекламний банер</div>
+    </div>
+  </x-import>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light'|'dark'&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;]}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = (obj) => Object.entries(obj).map(([k, v]) => {
+      const prop = k.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
+      return `${prop}:${typeof v === 'number' ? v + 'px' : v}`;
+    }).join(';');
+
+    const theme = this.props.theme ?? 'light';
+    const isDark = theme === 'dark';
+    const dark = {
+      bg: '#201D18', card: '#2B2823', sunken: '#272319', border: '#3A362E',
+      textPrimary: '#F5F1EA', textMuted: '#B4AC9B', accent: '#D99A6C',
+    };
+
+    const shellBase = { width: '100%', height: '100%', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' };
+    const headerBase = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-5) var(--space-5)', flexShrink: 0 };
+    const contentBase = { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'flex-start', overflow: 'hidden', minHeight: 0 };
+    const heroWrapStyle = { width: '100%', aspectRatio: '4/3', flexShrink: 0, overflow: 'hidden' };
+    const lowerStyle = { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-6)', padding: 'var(--space-6) var(--space-6)', minHeight: 0 };
+    const bannerBase = { flexShrink: 0, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', font: `400 var(--fs-caption)/1 var(--font-body)`, letterSpacing: 'var(--tracking-wide)' };
+    const stepRow = { display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)' };
+    const stepNumBase = { flexShrink: 0, width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', font: `600 12px/1 var(--font-body)`, marginTop: 1 };
+    const stepTextBase = { font: `400 var(--fs-body-sm)/1.45 var(--font-body)` };
+
+    return {
+      isDark,
+      shellStyle: s({ ...shellBase, background: isDark ? dark.bg : 'var(--surface-app)' }),
+      headerStyle: s({ ...headerBase, background: isDark ? dark.bg : 'var(--surface-app)', borderBottom: `1px solid ${isDark ? dark.border : 'var(--border-subtle)'}` }),
+      titleStyle: s({ font: `italic 400 20px/1.2 var(--font-display)`, color: isDark ? dark.textPrimary : 'var(--text-primary)' }),
+
+      contentStyle: s(contentBase),
+      heroWrapStyle: s(heroWrapStyle),
+      lowerStyle: s(lowerStyle),
+
+      stepsWrapStyle: s({ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', width: '100%', maxWidth: 300 }),
+      stepRowStyle: s(stepRow),
+      stepNumStyle: s({ ...stepNumBase, background: isDark ? 'rgba(217,154,108,0.18)' : 'var(--accent-primary-subtle)', color: isDark ? dark.accent : 'var(--accent-primary-hover)' }),
+      stepTextStyle: s({ ...stepTextBase, color: isDark ? '#D8D2C4' : 'var(--text-secondary)' }),
+
+      ctaWrapStyle: s({ width: '100%', maxWidth: 300, display: 'flex' }),
+
+      bannerStyle: s({ ...bannerBase, background: isDark ? dark.sunken : 'var(--surface-sunken)', borderTop: `1px solid ${isDark ? dark.border : 'var(--border-subtle)'}`, color: isDark ? dark.textMuted : 'var(--text-muted)' }),
+
+      settingsBtnStyle: s({ width: 40, height: 40, borderRadius: 'var(--radius-pill)', border: 'none', background: 'transparent', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: isDark ? dark.textPrimary : 'var(--text-primary)', transition: 'background var(--duration-fast) var(--ease-calm), transform var(--duration-fast) var(--ease-calm)' }),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

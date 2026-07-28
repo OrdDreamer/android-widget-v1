@@ -12,13 +12,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,16 +20,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import com.photowidget.data.WidgetConfig
-import com.photowidget.ui.AppSettingsScreen
-import com.photowidget.ui.MainScreen
-import com.photowidget.ui.WidgetListItem
-import com.photowidget.ui.WidgetSettingsScreen
+import androidx.navigation.compose.rememberNavController
 import com.photowidget.ui.enablePhotoWidgetEdgeToEdge
+import com.photowidget.ui.navigation.PhotoWidgetNavHost
+import com.photowidget.ui.screens.home.WidgetListItem
 import com.photowidget.ui.theme.PhotoWidgetTheme
 import com.photowidget.widget.PhotoWidgetReceiver
 import com.photowidget.widget.WidgetUpdateHelper
@@ -59,17 +46,8 @@ class MainActivity : ComponentActivity() {
                 val scope = rememberCoroutineScope()
                 var widgetIds by remember { mutableStateOf(intArrayOf()) }
                 var widgetItems by remember { mutableStateOf<Map<Int, WidgetListItem>>(emptyMap()) }
-                var editingWidgetId by remember { mutableIntStateOf(-1) }
-                var deletingWidgetId by remember { mutableIntStateOf(-1) }
-                var showingAppSettings by remember { mutableStateOf(false) }
                 val refreshKey = widgetsRefreshKey.intValue
                 val startWidgetId = intent?.getIntExtra(EXTRA_EDIT_WIDGET_ID, -1) ?: -1
-
-                LaunchedEffect(startWidgetId) {
-                    if (startWidgetId != -1) {
-                        editingWidgetId = startWidgetId
-                    }
-                }
 
                 DisposableEffect(Unit) {
                     val receiver = object : BroadcastReceiver() {
@@ -104,118 +82,41 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                when {
-                    showingAppSettings -> {
-                        AppSettingsScreen(onBack = { showingAppSettings = false })
-                    }
-
-                    editingWidgetId != -1 -> {
-                        var config by remember(editingWidgetId) {
-                            mutableStateOf(WidgetConfig())
-                        }
-                        LaunchedEffect(editingWidgetId) {
-                            config = repository.getConfig(editingWidgetId)
-                        }
-                        WidgetSettingsScreen(
-                            initialConfig = config,
-                            onSave = { saved ->
-                                scope.launch {
-                                    repository.saveConfig(editingWidgetId, saved)
-                                    saved.imageUri?.let {
-                                        WidgetUriHelper.ensureReadPermission(
-                                            this@MainActivity,
-                                            android.net.Uri.parse(it),
-                                        )
-                                    }
-                                    WidgetUpdateHelper.updateWidget(
-                                        this@MainActivity,
-                                        editingWidgetId,
-                                    )
-                                    WidgetUpdateHelper.requestSystemUpdate(
-                                        this@MainActivity,
-                                        editingWidgetId,
-                                    )
-                                    editingWidgetId = -1
-                                    widgetsRefreshKey.intValue++
-                                }
-                            },
-                            onCancel = { editingWidgetId = -1 },
-                        )
-                    }
-
-                    else -> {
-                        // Header lives inside MainScreen (Vibrant mockup).
-                        MainScreen(
-                            modifier = Modifier.fillMaxSize(),
-                            widgetIds = widgetIds,
-                            widgetItems = widgetItems,
-                            onEditWidget = { editingWidgetId = it },
-                            onDeleteWidget = { deletingWidgetId = it },
-                            onPinWidget = { pinWidget() },
-                            onOpenSettings = { showingAppSettings = true },
-                        )
-                    }
-                }
-
-                if (deletingWidgetId != -1) {
-                    AlertDialog(
-                        onDismissRequest = { deletingWidgetId = -1 },
-                        shape = RoundedCornerShape(24.dp),
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        title = {
-                            Text(
-                                text = stringResource(R.string.delete_widget_title),
-                                fontWeight = FontWeight.Black,
-                            )
-                        },
-                        text = {
-                            Text(
-                                text = stringResource(R.string.delete_widget_message),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        },
-                        confirmButton = {
-                            TextButton(
-                                onClick = {
-                                    val widgetId = deletingWidgetId
-                                    deletingWidgetId = -1
-                                    scope.launch {
-                                        repository.resetConfig(widgetId)
-                                        WidgetUpdateHelper.updateWidget(this@MainActivity, widgetId)
-                                        WidgetUpdateHelper.requestSystemUpdate(
-                                            this@MainActivity,
-                                            widgetId,
-                                        )
-                                        widgetsRefreshKey.intValue++
-                                        Toast.makeText(
-                                            this@MainActivity,
-                                            R.string.delete_widget_done,
-                                            Toast.LENGTH_LONG,
-                                        ).show()
-                                    }
-                                },
-                                colors = ButtonDefaults.textButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.primary,
-                                ),
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.delete_widget_confirm),
-                                    fontWeight = FontWeight.Bold,
+                PhotoWidgetNavHost(
+                    navController = rememberNavController(),
+                    widgetIds = widgetIds,
+                    widgetItems = widgetItems,
+                    startWidgetId = startWidgetId,
+                    onPinWidget = ::pinWidget,
+                    loadWidgetConfig = { widgetId -> repository.getConfig(widgetId) },
+                    onSaveWidgetConfig = { widgetId, saved ->
+                        scope.launch {
+                            repository.saveConfig(widgetId, saved)
+                            saved.imageUri?.let {
+                                WidgetUriHelper.ensureReadPermission(
+                                    this@MainActivity,
+                                    android.net.Uri.parse(it),
                                 )
                             }
-                        },
-                        dismissButton = {
-                            TextButton(
-                                onClick = { deletingWidgetId = -1 },
-                                colors = ButtonDefaults.textButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                ),
-                            ) {
-                                Text(stringResource(R.string.cancel))
-                            }
-                        },
-                    )
-                }
+                            WidgetUpdateHelper.updateWidget(this@MainActivity, widgetId)
+                            WidgetUpdateHelper.requestSystemUpdate(this@MainActivity, widgetId)
+                            widgetsRefreshKey.intValue++
+                        }
+                    },
+                    onResetWidget = { widgetId ->
+                        scope.launch {
+                            repository.resetConfig(widgetId)
+                            WidgetUpdateHelper.updateWidget(this@MainActivity, widgetId)
+                            WidgetUpdateHelper.requestSystemUpdate(this@MainActivity, widgetId)
+                            widgetsRefreshKey.intValue++
+                            Toast.makeText(
+                                this@MainActivity,
+                                R.string.delete_widget_done,
+                                Toast.LENGTH_LONG,
+                            ).show()
+                        }
+                    },
+                )
             }
         }
     }
