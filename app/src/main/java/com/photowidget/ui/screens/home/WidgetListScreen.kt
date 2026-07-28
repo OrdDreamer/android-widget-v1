@@ -5,6 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -90,6 +92,7 @@ fun WidgetListScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun WidgetRow(item: WidgetListItem?, onEdit: () -> Unit, onReset: () -> Unit) {
     PhotoWidgetCard(variant = CardVariant.Default, padding = CardPadding.Small, modifier = Modifier.fillMaxWidth()) {
@@ -118,12 +121,13 @@ private fun WidgetRow(item: WidgetListItem?, onEdit: () -> Unit, onReset: () -> 
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 2.dp),
                 )
-                Row(
+                FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.padding(top = 8.dp),
                 ) {
                     PhotoWidgetButton(text = stringResource(R.string.edit_widget), onClick = onEdit, variant = ButtonVariant.Primary, size = ButtonSize.Small)
-                    PhotoWidgetButton(text = stringResource(R.string.delete_widget_short), onClick = onReset, variant = ButtonVariant.Outline, size = ButtonSize.Small)
+                    PhotoWidgetButton(text = stringResource(R.string.delete_widget_short), onClick = onReset, variant = ButtonVariant.Secondary, size = ButtonSize.Small)
                 }
             }
         }

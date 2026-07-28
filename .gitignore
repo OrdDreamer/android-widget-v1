@@ -12,6 +12,9 @@ app/build/
 local.properties
 .tools/
 
+# Scratch files
+tmp/
+
 # IDE
 *.iml
 .idea/
