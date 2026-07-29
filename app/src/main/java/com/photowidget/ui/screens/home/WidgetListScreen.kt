@@ -25,6 +25,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -77,7 +79,19 @@ fun WidgetListScreen(
             }
         }
 
-        Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
+        val ctaBorderColor = MaterialTheme.colorScheme.outlineVariant
+        Box(
+            modifier = Modifier
+                .drawBehind {
+                    drawLine(
+                        color = ctaBorderColor,
+                        start = Offset(0f, 0f),
+                        end = Offset(size.width, 0f),
+                        strokeWidth = 1.dp.toPx(),
+                    )
+                }
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+        ) {
             PhotoWidgetButton(
                 text = stringResource(R.string.pin_widget),
                 onClick = onPinWidget,
